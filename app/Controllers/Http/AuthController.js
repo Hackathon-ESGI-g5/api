@@ -33,5 +33,6 @@ class AuthController {
   }
 
 }
+//test
 
 module.exports = AuthController;

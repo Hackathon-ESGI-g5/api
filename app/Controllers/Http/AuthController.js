@@ -5,13 +5,20 @@ const Persona = use('Persona');
 class AuthController {
 
   async register ({ request, response }) {
-    const payload = request.only(['email', 'password', 'password_confirmation', 'firstname', 'lastname']);
-    const user = await Persona.register(payload);
-    return response.ok({
-      user,
-      status: 200,
-      message: 'Client account created successfully',
-    })
+    const payload = request.only(['email', 'password', 'password_confirmation', 'firstname', 'lastname', 'profil_picture_url', 'role_id']);
+    try {
+      const user = await Persona.register(payload);
+      return response.status(200).json({
+        user,
+        status: 200,
+        message: 'Client account created successfully',
+      })
+    } catch(e) {
+        return response.status(200).json({
+          status: 400,
+          message: 'Error on registration',
+        })
+    }
   }
 
   async login ({ request, auth, response }) {

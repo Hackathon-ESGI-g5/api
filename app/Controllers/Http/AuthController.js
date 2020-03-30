@@ -14,7 +14,7 @@ class AuthController {
         message: 'Client account created successfully',
       })
     } catch(e) {
-        return response.status(200).json({
+        return response.status(400).json({
           status: 400,
           message: 'Error on registration',
         })

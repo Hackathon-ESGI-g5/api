@@ -24,3 +24,9 @@ Route.post('forgot-password', 'AuthController.forgotPassword');
 Route.get('/', () => {
   return { greeting: 'Hello world in JSON' }
 })
+
+Route.group(() => {
+  Route.post('/create', 'ShopController.create');
+  Route.get('/:id/show', 'ShopController.show');
+  Route.put('/:id/edit', 'ShopController.edit');
+}).prefix('/shop').middleware('auth');

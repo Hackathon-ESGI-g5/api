@@ -40,6 +40,9 @@ class User extends Model {
   booking () {
     return this.hasMany('App/Models/Booking')
   }
+  shop(){
+    return this.hasOne('App/Models/Shop')
+  }
 }
 
 module.exports = User

@@ -13,7 +13,6 @@ class ShopSchema extends Schema {
       table.string('city', 245)
       table.string('phone_number', 245)
       table.string('email', 245)
-      table.integer('user_id').unsigned().references('id').inTable('users')
       table.timestamps()
     })
   }

@@ -14,7 +14,12 @@ class SlotController {
     }
 
     async generate({ request, auth, response }){
-
+        const payload = request.only(['shop_id']);
+        //generate slots for a shop
+        const schedules = await Schedule.findByOrFail('shop_id', payload.shop_id);
+        return response.status(200).json({
+            schedules
+        });
     }
 
     async create({ request, auth, response }){

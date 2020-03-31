@@ -21,12 +21,19 @@ class ShopController {
     shop.zip_code = zip_code;
     shop.city = city;
 
-    await shop.save();
-
-    return response.status(200).json({
-      status: "Success",
-      shop
-    });
+    try{
+      await shop.save();
+      return response.status(201).json({
+        status: "Success",
+        shop
+      });
+    } catch(e) {
+      return response.status(400).json({
+        status: "Error",
+        message: "An error occured on create Shop",
+        stack_trace: e
+      });
+    }
   }
 
   async update({ request, auth, response }){

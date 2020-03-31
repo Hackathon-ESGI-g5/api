@@ -37,3 +37,7 @@ Route.group(() => {
   Route.get('/:id/show', 'ShopController.getById');
   Route.put('/:id/edit', 'ShopController.update');
 }).prefix('/slot').middleware('auth');
+
+Route.group(() => {
+  Route.post('/:shopId/create', 'ScheduleController.create');
+}).prefix('/schedule').middleware('auth');

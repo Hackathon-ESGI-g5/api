@@ -5,7 +5,7 @@ const Schema = use('Schema')
 
 class StatusSchedulesSchema extends Schema {
   up () {
-    //this.drop('status_schedules')
+    this.drop('status_schedules')
   }
 
   down () {

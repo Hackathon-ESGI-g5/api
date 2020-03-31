@@ -32,10 +32,10 @@ Route.group(() => {
 }).prefix('/shop').middleware('auth');
 
 Route.group(() => {
-  Route.post('/create', 'ShopController.create');
-  Route.post('/generate', 'ShopController.generate');
-  Route.get('/:id/show', 'ShopController.getById');
-  Route.put('/:id/edit', 'ShopController.update');
+  Route.post('/create', 'SlotController.create');
+  Route.post('/generate', 'SlotController.generate');
+  Route.get('/:id/show', 'SlotController.getById');
+  Route.put('/:id/edit', 'SlotController.update');
 }).prefix('/slot').middleware('auth');
 
 Route.group(() => {

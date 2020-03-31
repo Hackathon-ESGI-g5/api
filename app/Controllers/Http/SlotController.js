@@ -13,6 +13,10 @@ class SlotController {
         
     }
 
+    async generate({ request, auth, response }){
+
+    }
+
     async create({ request, auth, response }){
 
     }

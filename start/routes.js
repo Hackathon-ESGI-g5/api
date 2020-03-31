@@ -27,6 +27,13 @@ Route.get('/', () => {
 
 Route.group(() => {
   Route.post('/create', 'ShopController.create');
-  Route.get('/:id/show', 'ShopController.show');
-  Route.put('/:id/edit', 'ShopController.edit');
+  Route.get('/:id/show', 'ShopController.getById');
+  Route.put('/:id/edit', 'ShopController.update');
 }).prefix('/shop').middleware('auth');
+
+Route.group(() => {
+  Route.post('/create', 'ShopController.create');
+  Route.post('/generate', 'ShopController.generate');
+  Route.get('/:id/show', 'ShopController.getById');
+  Route.put('/:id/edit', 'ShopController.update');
+}).prefix('/slot').middleware('auth');

@@ -7,6 +7,7 @@ class ScheduleSchema extends Schema {
   up () {
     this.alter('schedules', (table) => {
       table.dropForeign('status_schedule_id')
+      table.dropColum('status_schedule_id')
       table.boolean('isopen')
       table.integer('number_max')
     })

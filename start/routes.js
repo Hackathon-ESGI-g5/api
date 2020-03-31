@@ -29,6 +29,7 @@ Route.group(() => {
   Route.post('/create', 'ShopController.create');
   Route.get('/:id/show', 'ShopController.getById');
   Route.put('/:id/edit', 'ShopController.update');
+  Route.delete('/:id/delete', 'ShopController.delete');
 }).prefix('/shop').middleware('auth');
 
 Route.group(() => {

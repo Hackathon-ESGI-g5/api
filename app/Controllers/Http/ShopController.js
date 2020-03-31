@@ -59,8 +59,14 @@ class ShopController {
     }
   }
 
-  async delete({ request, auth, response }){
-
+  async delete({ request, auth, response, params }){
+    // TODO : handle relations delete
+    const shop = await Shop.find(params.id);
+    await shop.delete();
+    return response.status(200).json({
+      status: `Shop ${params.id} deleted`,
+      shop
+    });
   }
 }
 

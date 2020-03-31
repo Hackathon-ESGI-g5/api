@@ -30,6 +30,7 @@ Route.group(() => {
   Route.get('/:id/show', 'ShopController.getById');
   Route.put('/:id/edit', 'ShopController.update');
   Route.post('/search', 'ShopController.search');
+  Route.delete('/:id/delete', 'ShopController.delete');
 }).prefix('/shop').middleware('auth');
 
 Route.group(() => {

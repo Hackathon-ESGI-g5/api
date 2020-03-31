@@ -29,12 +29,15 @@ Route.group(() => {
   Route.post('/create', 'ShopController.create');
   Route.get('/:id/show', 'ShopController.getById');
   Route.put('/:id/edit', 'ShopController.update');
+  Route.post('/search', 'ShopController.search');
 }).prefix('/shop').middleware('auth');
 
 Route.group(() => {
   Route.post('/create', 'SlotController.create');
   Route.post('/generate', 'SlotController.generate');
   Route.get('/:id/show', 'SlotController.getById');
+  Route.get('/byshop/:shop_id', 'SlotController.getByShop');
+  Route.get('/all', 'SlotController.getAll');
   Route.put('/:id/edit', 'SlotController.update');
 }).prefix('/slot').middleware('auth');
 

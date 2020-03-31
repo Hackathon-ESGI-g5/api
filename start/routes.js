@@ -42,3 +42,8 @@ Route.group(() => {
 Route.group(() => {
   Route.post('/:shopId/create', 'ScheduleController.create');
 }).prefix('/schedule').middleware('auth');
+
+//
+// Route.group(() => {
+//   Route.post('/:shopId/create', 'BookmarkController.create');
+// }).prefix('/bookmark').middleware('auth');

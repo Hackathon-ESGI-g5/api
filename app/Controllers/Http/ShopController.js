@@ -3,8 +3,17 @@
 const Shop = use('App/Models/Shop');
 
 class ShopController {
-  async getByid({ request, auth, response }) {
 
+  async getById({ request, auth, response, params }) {
+    // TODO ADD SCHEDULES
+    const id = params.id;
+    const shop = await Shop.find(id);
+    const schedules = await shop.schedules().fetch();
+    return response.status(201).json({
+      status: "Success",
+      shop,
+      schedules,
+    });
   }
 
   async getAll({ request, auth, response }){

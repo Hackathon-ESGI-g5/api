@@ -14,7 +14,7 @@ class StatusScheduleSchema extends Schema {
   }
 
   down () {
-    this.drop('status_schedules')
+    //this.drop('status_schedules')
   }
 }
 

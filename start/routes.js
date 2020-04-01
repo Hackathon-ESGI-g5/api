@@ -50,6 +50,9 @@ Route.group(() => {
 
 Route.group(() => {
   Route.post('/:slotId/create', 'BookingController.create')
+  Route.delete('/:slotId','BookingController.delete')
+  Route.get('/user/','BookingController.getByUser')
+  Route.get('/shop/:shopId','BookingController.getByShop')
 }).prefix('/booking').middleware('auth');
 
 //

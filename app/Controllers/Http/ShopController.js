@@ -43,10 +43,10 @@ class ShopController {
 
   async create({ request, auth, response }){
 
-    const { label, address, zip_code, city, phone_number, email, profil_picture_url, siret, siren, actitivty, path_to_validation_shop, path_to_validation_owner,is_validate } = request.post();
+    const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate } = request.post();
     const shop = new Shop();
     shop.user_id = auth.user.id;
-    this.saveShop(shop, label, address, zip_code, city,phone_number, email, profil_picture_url, siret, siren, actitivty, path_to_validation_shop, path_to_validation_owner,is_validate);
+    this.saveShop(shop, label, address, zip_code, city,phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate);
     try{
       await shop.save();
       return response.status(201).json({
@@ -62,27 +62,26 @@ class ShopController {
     }
   }
 
-
-  async saveShop(shop, label, address, zip_code, city,phone_number, email, profil_picture_url, siret, siren, actitivty, path_to_validation_shop, path_to_validation_owner,is_validate) {
+  async saveShop(shop, label, address, zip_code, city,phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate) {
     shop.label = label;
     shop.address = address;
     shop.zip_code = zip_code;
     shop.city = city;
     shop.phone_number = phone_number;
     shop.email = email;
-    shop.profil_picture_url = profil_picture_url;
+    shop.profile_picture_url = profile_picture_url;
     shop.siret = siret;
     shop.siren = siren;
-    shop.actitivty = actitivty;
+    shop.activity = activity;
     shop.path_to_validation_shop = path_to_validation_shop;
     shop.path_to_validation_owner = path_to_validation_owner;
     shop.is_validate = is_validate;
   };
 
   async update({ request, response, params }){
-    const { label, address, zip_code, city, phone_number, email, profil_picture_url, siret, siren, actitivty, path_to_validation_shop, path_to_validation_owner,is_validate } = request.post();
+    const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate } = request.post();
     const shop = await Shop.find(params.id);
-    this.saveShop(shop, label, address, zip_code, city,phone_number, email, profil_picture_url, siret, siren, actitivty, path_to_validation_shop, path_to_validation_owner,is_validate);
+    this.saveShop(shop, label, address, zip_code, city,phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate);
     try{
       await shop.save();
       return response.status(200).json({

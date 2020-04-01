@@ -8,6 +8,7 @@ class BookingSchema extends Schema {
     this.create('bookings', (table) => {
       table.integer('slot_id').unsigned().references('id').inTable('slots')
       table.integer('user_id').unsigned().references('id').inTable('users')
+      table.timestamps()
     })
   }
 

@@ -48,6 +48,10 @@ Route.group(() => {
   Route.get('/all', 'ScheduleController.getAll');
 }).prefix('/schedule').middleware('auth');
 
+Route.group(() => {
+  Route.post('/:slotId/create', 'BookingController.create')
+}).prefix('/booking').middleware('auth');
+
 //
 // Route.group(() => {
 //   Route.post('/:shopId/create', 'BookmarkController.create');

@@ -37,8 +37,8 @@ class User extends Model {
   bookmarks () {
     return this.belongsToMany('App/Models/Shop').pivotModel('App/Models/Bookmark')
   }
-  booking () {
-    return this.hasMany('App/Models/Booking')
+  bookings () {
+    return this.belongsToMany('App/Models/Slot').pivotModel('App/Models/Booking')
   }
   shop(){
     return this.hasOne('App/Models/Shop')

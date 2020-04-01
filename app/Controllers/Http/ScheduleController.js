@@ -133,7 +133,7 @@ class ScheduleController {
             }
                 
         }
-        
+
         //update for openning dates
         if(update_on_openning){
             //current dates for finding existings slots
@@ -170,8 +170,6 @@ class ScheduleController {
                     }
                 }
                 //return response.ok(slots);
-            } else {
-                //create
             }
         }
 

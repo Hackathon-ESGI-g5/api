@@ -10,8 +10,22 @@ class ScheduleController {
 
     }
 
-    async getByShop({ request, auth, response }){
-
+    async getByShop({ request, auth, params, response }){
+        const shopId = params.shopId;
+        try{
+            const schedules = await Schedule.query().where("shop_id",shopId).fetch();
+            return response.status(200).json({
+                status: "Success",
+                rows: schedules.rows.length,
+                schedules
+            });
+        } catch(e) {
+            return response.status(400).json({
+                status: "Error",
+                message: "Error on getting a Schedule by shop, maybe id not exists",
+                stack_trace: e
+            });
+        }
     }
 
     async getByStatus({ request, auth, response }){
@@ -29,7 +43,7 @@ class ScheduleController {
         } catch(e) {
             return response.status(400).json({
                 status: "Error",
-                message: "Error on getting a slot by id, maybe id not exists",
+                message: "Error on getting a schedule by id, maybe id not exists",
                 stack_trace: e
             });
         }

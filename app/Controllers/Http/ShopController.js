@@ -17,7 +17,12 @@ class ShopController {
   }
 
   async getAll({ request, auth, response }){
-
+    const shops = await Shop.all();
+    return response.status(200).json({
+        status: "Success",
+        rows: shops.rows.length,
+        shops
+    });
   }
 
   async search({ request, auth, response }){

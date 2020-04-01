@@ -139,7 +139,39 @@ class ScheduleController {
 
         // updates on interval between slots
         if(update_on_interval){
-
+            //current dates for finding existings slots
+            var currentdate = moment().startOf('day')
+            var in_two_weeks = moment(currentdate).add(2,"week")
+            console.log(currentdate);
+            console.log(in_two_weeks);
+            while(currentdate.format() <= in_two_weeks.format()){ // tant que l'on est dans les 15 prochains jours
+                    //get slots available on this period to update them.
+                var tomorrow = moment(currentdate).add(1,"day");
+                const slots = await Slot.query()
+                    .where('begin_at', '>', currentdate.format())
+                    .andWhere('end_at', '<', tomorrow.format())
+                    .andWhere('day', '=', schedule.day)
+                    .fetch();
+                if(slots.rows.length > 0){ // SLOTS of a day
+                    var number_slots_without_booking = 0;
+                    for(let i in slots.rows){//check for each slot on the day if he has booking or not
+                        if(schedule.number_max == slots.rows[i].number_max){
+                            number_slots_without_booking += 1;
+                        }
+                    }
+                    if(number_slots_without_booking == slots.rows.length){ // if all slots on current day haven't booking
+                        // we delete all slots of this day
+                        await Slot.query()
+                            .where('begin_at', '>', currentdate.format())
+                            .andWhere('end_at', '<', tomorrow.format())
+                            .andWhere('day', '=', schedule.day)
+                            .delete();
+                        console.log("Slots deleted between "+currentdate.format()+" and "+tomorrow.format());
+                    }
+                }
+                currentdate.add(1,"day");//increment currentdate to pass to next day on the loop
+            }
+                
         }
 
         // updates if number_max per slots changed

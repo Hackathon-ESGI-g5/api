@@ -2,6 +2,7 @@
 const Schedule = use('App/Models/Schedule');
 const Slot = use('App/Models/Slot');
 const Booking = use('App/Models/Booking');
+const SlotController = use('App/Controllers/Http/SlotController');
 const moment = use('moment')
 
 class ScheduleController {

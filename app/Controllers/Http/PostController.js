@@ -1,4 +1,5 @@
 'use strict'
+const Post = use('App/Models/Post');
 
 class PostController {
     async getById({ request, params, auth, response }) {

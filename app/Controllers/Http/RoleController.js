@@ -1,4 +1,5 @@
 'use strict'
+const Role = use('App/Models/Role');
 
 class RoleController {
     async getByid({ request, auth, response }) {

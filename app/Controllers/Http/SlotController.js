@@ -5,10 +5,10 @@ const Slot = use('App/Models/Slot');
 const moment = use('moment')
 
 class SlotController {
-    async getByid({ request, auth, response }) {
-        const payload = request.only(['id']);
+    async getById({ params, auth, response }) {
+        const slot_id = params.id;
         try{
-            const slot = await Slot.find(payload.id);
+            const slot = await Slot.find(slot_id);
             return response.status(200).json({
                 status: "Success",
                 slot

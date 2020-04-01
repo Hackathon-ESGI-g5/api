@@ -1,6 +1,7 @@
 'use strict'
 const Schedule = use('App/Models/Schedule');
 const Slot = use('App/Models/Slot');
+const Booking = use('App/Models/Booking');
 const moment = use('moment')
 
 class ScheduleController {
@@ -66,9 +67,13 @@ class ScheduleController {
             var update_on_openning = false;
             var update_on_interval = false;
             var update_on_number_max = false;
+            var older_numbermax = null;
             if( schedule.open_hour != open_hour || schedule.close_hour != close_hour ) update_on_openning = true;
             if( schedule.interval != interval ) update_on_interval = true;
-            if( schedule.number_max != number_max ) update_on_number_max = true;
+            if( schedule.number_max != number_max ){
+                update_on_number_max = true;
+                older_numbermax = parseInt(schedule.number_max);
+            }
 
             //do updates for schedule
             schedule.open_hour = open_hour;
@@ -80,7 +85,7 @@ class ScheduleController {
             await schedule.save()
 
             //async updates for slots
-            this.updateSlots({update_on_openning,update_on_interval,update_on_number_max,schedule});
+            this.updateSlots({update_on_openning,update_on_interval,update_on_number_max,older_numbermax,schedule});
 
             return response.status(200).json({
                 status: "Success",
@@ -94,10 +99,50 @@ class ScheduleController {
         }
     }
 
-    async updateSlots({update_on_openning,update_on_interval,update_on_number_max,schedule}){
+    async updateSlots({update_on_openning,update_on_interval,update_on_number_max,older_numbermax,schedule}){
         console.log("starting updatesSlot");
+
+        // updates on interval between slots
+        if(update_on_interval){
+            console.log("==== Starting update on interval");
+            //current dates for finding existings slots
+            var currentdate = moment().startOf('day')
+            var in_two_weeks = moment(currentdate).add(2,"week")
+            console.log(currentdate);
+            console.log(in_two_weeks);
+            while(currentdate.format() <= in_two_weeks.format()){ // tant que l'on est dans les 15 prochains jours
+                    //get slots available on this period to update them.
+                var tomorrow = moment(currentdate).add(1,"day");
+                const slots = await Slot.query()
+                    .where('begin_at', '>', currentdate.format())
+                    .andWhere('end_at', '<', tomorrow.format())
+                    .andWhere('day', '=', schedule.day)
+                    .fetch();
+                if(slots.rows.length > 0){ // SLOTS of a day
+                    var number_slots_without_booking = 0;
+                    for(let i in slots.rows){//check for each slot on the day if he has booking or not
+                        if(schedule.number_max == slots.rows[i].number_max){
+                            number_slots_without_booking += 1;
+                        }
+                    }
+                    if(number_slots_without_booking == slots.rows.length){ // if all slots on current day haven't booking
+                        // we delete all slots of this day
+                        await Slot.query()
+                            .where('begin_at', '>', currentdate.format())
+                            .andWhere('end_at', '<', tomorrow.format())
+                            .andWhere('day', '=', schedule.day)
+                            .delete();
+                        console.log("Slots deleted between "+currentdate.format()+" and "+tomorrow.format());
+                    }
+                }
+                currentdate.add(1,"day");//increment currentdate to pass to next day on the loop
+            }
+            console.log("==== Update on interval complete"); 
+        }
+
         //update for openning dates
         if(update_on_openning){
+            console.log("==== Starting update on openning");
             //current dates for finding existings slots
             var currentdate = moment().startOf('day')
             var in_two_weeks = moment(currentdate).add(2,"week")
@@ -131,20 +176,47 @@ class ScheduleController {
                         await slot.delete();
                     }
                 }
-                //return response.ok(slots);
-            } else {
-                //create
             }
-        }
-
-        // updates on interval between slots
-        if(update_on_interval){
-
+            console.log("==== Update on openning complete");
         }
 
         // updates if number_max per slots changed
         if(update_on_number_max){
-
+            console.log("==== Starting update on numbermax");
+            //current dates for finding existings slots
+            var currentdate = moment().startOf('day')
+            var in_two_weeks = moment(currentdate).add(2,"week")
+            console.log(currentdate);
+            console.log(in_two_weeks);
+                //get slots available on this period to update them.
+            const slots = await Slot.query()
+                .where('begin_at', '>', currentdate.format())
+                .andWhere('end_at', '<', in_two_weeks.format())
+                .andWhere('day', '=', schedule.day)
+                .fetch();
+            if(slots.rows.length > 0){
+                for(let i in slots.rows){
+                    console.log("older_numbermax : ",older_numbermax);
+                    console.log("new_numbermax : ",schedule.number_max);
+                    if(slots.rows[i].number_max == older_numbermax){ // if no booking on slots, juste update the number by the new
+                        const slot = await Slot.find(slots.rows[i].id);
+                        slot.number_max = schedule.number_max;
+                        await slot.save();
+                    } else { // if a slot had booking, count them
+                        const bookings = await Booking.query().where("slot_id",slots.rows[i].id).fetch()
+                        if(bookings.rows.length >= schedule.number_max){ // if slot has more or equal number of booking than the new number_max, then put slot's number_max to 0
+                            const slot = await Slot.find(slots.rows[i].id);
+                            slot.number_max = 0;
+                            await slot.save();
+                        } else if(bookings.rows.length < schedule.number_max){ // if slot has less number of booking than the new number_max, then put slot's number_max to difference between booking's and new number_max
+                            const slot = await Slot.find(slots.rows[i].id);
+                            slot.number_max = schedule.number_max-bookings.rows.length;
+                            await slot.save();
+                        }
+                    }
+                }
+            }
+            console.log("==== Update on numbermax complete");
         }
         
     }

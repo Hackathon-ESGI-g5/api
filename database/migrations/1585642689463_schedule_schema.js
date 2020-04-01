@@ -11,7 +11,6 @@ class ScheduleSchema extends Schema {
       table.boolean('isopen')
       table.integer('number_max')
     })
-    this.drop('status_schedules')
   }
 
   down () {

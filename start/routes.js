@@ -47,3 +47,8 @@ Route.group(() => {
   Route.put('/:id/edit', 'ScheduleController.update');
   Route.get('/all', 'ScheduleController.getAll');
 }).prefix('/schedule').middleware('auth');
+
+//
+// Route.group(() => {
+//   Route.post('/:shopId/create', 'BookmarkController.create');
+// }).prefix('/bookmark').middleware('auth');

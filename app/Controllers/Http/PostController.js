@@ -103,7 +103,6 @@ class PostController {
                 await post.delete();
                 return response.status(200).json({
                     status: "Deletion succeed",
-                    post
                 });
             } catch(e) {
                 return response.status(400).json({

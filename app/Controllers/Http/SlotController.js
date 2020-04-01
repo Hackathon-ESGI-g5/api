@@ -148,7 +148,28 @@ class SlotController {
     }
 
     async delete({ request, auth, response }){
-
+        const slotId = params.slotId;
+        const slot = await Slot.find(slotId);
+        if(slot != null){
+            try{
+                await slot.delete();
+                return response.status(200).json({
+                    status: "Deletion succeed"
+                });
+            } catch(e) {
+                return response.status(400).json({
+                    status: "Error",
+                    message: "An error occured on delete Slot",
+                    stack_trace: e
+                });
+            }
+        } else {
+            return response.status(404).json({
+                status: "Error",
+                message: "Slot not found",
+                stack_trace: e
+            });
+        }
     }
 }
 

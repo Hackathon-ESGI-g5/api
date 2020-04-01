@@ -108,7 +108,6 @@ class ShopController {
     await shop.delete();
     return response.status(200).json({
       status: `Shop ${params.id} deleted`,
-      shop
     });
   }
 }

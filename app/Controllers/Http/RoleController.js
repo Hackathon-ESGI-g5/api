@@ -85,8 +85,7 @@ class RoleController {
             try{
                 await role.delete();
                 return response.status(200).json({
-                    status: "Deletion succeed",
-                    role
+                    status: "Deletion succeed"
                 });
             } catch(e) {
                 return response.status(400).json({

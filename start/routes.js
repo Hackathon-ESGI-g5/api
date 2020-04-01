@@ -47,6 +47,7 @@ Route.group(() => {
   Route.put('/:id/edit', 'ScheduleController.update');
   Route.get('/all', 'ScheduleController.getAll');
   Route.get('/byid/:id', 'ScheduleController.getAll');
+  Route.get('/shop/:shopId', 'ScheduleController.getByShop');
 }).prefix('/schedule').middleware('auth');
 
 Route.group(() => {

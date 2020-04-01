@@ -18,7 +18,12 @@ class BookmarkController {
   }
 
   async delete({ request, auth, response, params }){
-    // const bookmark = Bookmark.find()
+    const shop = await Shop.query().find(params.shopId);
+    const user = auth.user;
+    await user.bookmarks().detach(shop);
+    return response.status(200).json({
+      status: 'Deletion succeed'
+    })
   }
 
 }

@@ -1,6 +1,7 @@
 'use strict'
 const Schedule = use('App/Models/Schedule');
 const Slot = use('App/Models/Slot');
+const Booking = use('App/Models/Booking');
 const moment = use('moment')
 
 class ScheduleController {
@@ -71,7 +72,7 @@ class ScheduleController {
             if( schedule.interval != interval ) update_on_interval = true;
             if( schedule.number_max != number_max ){
                 update_on_number_max = true;
-                older_numbermax = { ...schedule.number_max };
+                older_numbermax = parseInt(schedule.number_max);
             }
 
             //do updates for schedule
@@ -203,13 +204,13 @@ class ScheduleController {
                         await slot.save();
                     } else { // if a slot had booking, count them
                         const bookings = await Booking.query().where("slot_id",slots.rows[i].id).fetch()
-                        if(bookings.length >= schedule.number_max){ // if slot has more or equal number of booking than the new number_max, then put slot's number_max to 0
+                        if(bookings.rows.length >= schedule.number_max){ // if slot has more or equal number of booking than the new number_max, then put slot's number_max to 0
                             const slot = await Slot.find(slots.rows[i].id);
                             slot.number_max = 0;
                             await slot.save();
-                        } else if(bookings.length < schedule.number_max){ // if slot has less number of booking than the new number_max, then put slot's number_max to difference between booking's and new number_max
+                        } else if(bookings.rows.length < schedule.number_max){ // if slot has less number of booking than the new number_max, then put slot's number_max to difference between booking's and new number_max
                             const slot = await Slot.find(slots.rows[i].id);
-                            slot.number_max = schedule.number_max-bookings.length;
+                            slot.number_max = schedule.number_max-bookings.rows.length;
                             await slot.save();
                         }
                     }

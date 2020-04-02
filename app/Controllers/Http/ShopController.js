@@ -87,6 +87,7 @@ class ShopController {
           await shop.save();
           return response.status(201).json({
             status: "Shop successfully created",
+            user,
             shop
           });
         } catch(e) {

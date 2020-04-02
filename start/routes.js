@@ -48,6 +48,7 @@ Route.group(() => {
   Route.get('/all', 'ScheduleController.getAll');
   Route.get('/byid/:id', 'ScheduleController.getAll');
   Route.get('/shop/:shopId', 'ScheduleController.getByShop');
+  Route.get('/status/:status', 'ScheduleController.getByStatus');
 }).prefix('/schedule').middleware('auth');
 
 Route.group(() => {

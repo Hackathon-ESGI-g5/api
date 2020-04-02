@@ -35,22 +35,28 @@ Route.group(() => {
 }).prefix('/user').middleware('auth');
 
 Route.group(() => {
-  Route.get('/all', 'ShopController.getAll');
   Route.get('/:shopId/show', 'ShopController.getById');
   Route.put('/:shopId/edit', 'ShopController.update');
-  Route.post('/search', 'ShopController.search');
   Route.delete('/:shopId/delete', 'ShopController.delete');
 }).prefix('/shop').middleware('auth');
+
+Route.group(() => {
+  Route.get('/all', 'ShopController.getAll');
+  Route.post('/search', 'ShopController.search');
+}).prefix('/shop').middleware('guest');
 
 Route.group(() => {
   //Route.post('/create', 'SlotController.create');
   Route.post('/:shopId/generate', 'SlotController.generate');
   Route.get('/all', 'SlotController.getAll');
-  Route.get('/byshop/:shopId/show', 'SlotController.getByShop');
   Route.get('/:slotId/show', 'SlotController.getById');
   Route.put('/:slotId/edit', 'SlotController.update');
   Route.delete('/:slotId/delete', 'SlotController.delete');
 }).prefix('/slot').middleware('auth');
+
+Route.group(() => {
+  Route.get('/byshop/:shopId/show', 'SlotController.getByShop');
+}).prefix('/slot').middleware('guest');
 
 Route.group(() => {
   Route.post('/:shopId/create', 'ScheduleController.create');

@@ -70,10 +70,10 @@ class ShopController {
     const { text, lng, lat, address, zip_code, city } = request.post();
     try{
       const shops = await Shop.query()
-        .where('label', 'like', text)
-        .or('address', 'like', text)
-        .or('city', 'like', text)
-        .or('zip_code', 'like', text)
+        .where('label', 'like', `%${text}%`)
+        .orWhere('address', 'like', `%${text}%`)
+        .orWhere('city', 'like', `%${text}%`)
+        .orWhere('zip_code', 'like', `%${text}%`)
         .fetch();
       return response.status(200).json({
         shops
@@ -82,7 +82,7 @@ class ShopController {
       return response.status(400).json({
         status: "Error",
         message: "Error during search",
-        stack_trace: e
+        stack_trace: e.message
       })
     }
   }

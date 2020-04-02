@@ -82,16 +82,16 @@ Route.group(() => {
 
 Route.group(() => {
   Route.post('/:shopId/create', 'PostController.create');
-  Route.put('/:postId/update', 'PostController.update');
+  Route.put('/:postId/edit', 'PostController.update');
   Route.delete('/:postId/delete', 'PostController.delete');
   Route.get('/all', 'PostController.getAll');
-  Route.get('/shop/:shopId.show', 'PostController.getByShop');
+  Route.get('/shop/:shopId/show', 'PostController.getByShop');
   Route.get('/:postId/show', 'PostController.getById');
 }).prefix('/post').middleware('auth');
 
 Route.group(() => {
   Route.post('/create', 'RoleController.create');
-  Route.put('/:roleId/update', 'RoleController.update');
+  Route.put('/:roleId/edit', 'RoleController.update');
   Route.delete('/:roleId/delete', 'RoleController.delete');
   Route.get('/all', 'RoleController.getAll');
   Route.get('/:roleId/show', 'RoleController.getById');

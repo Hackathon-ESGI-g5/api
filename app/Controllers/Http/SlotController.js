@@ -57,12 +57,12 @@ class SlotController {
         }
     }
 
-    async generate({ request, auth, response }){
-        const payload = request.only(['shop_id', 'start_datetime', 'end_datetime']);
+    async generate({ params, auth, response }){
+        const shopId = params.shopId;
         //generate slots for a shop
 
         //get all schedules for a shop
-        const schedules = await Schedule.query().where('shop_id', payload.shop_id).fetch();
+        const schedules = await Schedule.query().where('shop_id', shopId).fetch();
 
         const days = {
             1: "Monday",
@@ -115,7 +115,7 @@ class SlotController {
                         .fetch();
                     if(slots.rows.length == 0){
                         const slot = new Slot();
-                        slot.shop_id = payload.shop_id;
+                        slot.shop_id = shopId;
                         slot.begin_at = b;
                             //add value and increment for while loop
                         slot.end_at = e;
@@ -137,13 +137,8 @@ class SlotController {
         });
     }
 
-    async create({ request, auth, response }){
-
-    }
-
     async update({ request, auth, response }){
         const payload = request.only(['shop_id']);
-
 
     }
 

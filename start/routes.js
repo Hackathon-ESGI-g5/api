@@ -26,6 +26,13 @@ Route.get('/', () => {
 })
 
 Route.group(() => {
+  Route.get('/:id/show', 'UserController.getById');
+  Route.put('/:id/edit', 'UserController.update');
+  Route.post('/search', 'UserController.search');
+  Route.delete('/:id/delete', 'UserController.delete');
+}).prefix('/user').middleware('auth');
+
+Route.group(() => {
   Route.post('/create', 'ShopController.create');
   Route.get('/:id/show', 'ShopController.getById');
   Route.put('/:id/edit', 'ShopController.update');
@@ -35,7 +42,7 @@ Route.group(() => {
 
 Route.group(() => {
   //Route.post('/create', 'SlotController.create');
-  Route.post('/generate', 'SlotController.generate');
+  Route.post('/:shopId/generate', 'SlotController.generate');
   Route.get('/:id/show', 'SlotController.getById');
   Route.get('/byshop/:shop_id', 'SlotController.getByShop');
   Route.get('/all', 'SlotController.getAll');
@@ -79,3 +86,5 @@ Route.group(() => {
   Route.get('/all', 'RoleController.getAll');
   Route.get('/:roleId/show', 'RoleController.getById');
 }).prefix('/role').middleware('auth');
+
+

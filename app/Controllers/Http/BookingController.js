@@ -15,23 +15,22 @@ class BookingController {
     if(slot != null){
         const shopId = slot.shop_id;
         const user = auth.user;
-    
+
         // check if user already book a slot for today
         const slotDate = moment(slot.begin_at).format('YYYY-MM-DD');
-        console.log("slotDate !! ",slotDate);
-        const daySlots = await Slot.query().where('shop_id', shopId).andWhereBetween('begin_at', [slotDate,slotDate]).setVisible('id').fetch();
+        const slotDatePlusOneDay = moment(slot.begin_at).add(1, 'day').format('YYYY-MM-DD');
+        const daySlots = await Slot.query().where('shop_id', shopId).andWhereBetween('begin_at', [slotDate, slotDatePlusOneDay]).setVisible('id').fetch();
         const daySlotsId = daySlots.rows.map(slot => slot.id);
         const bookings = await Database.table('bookings').whereIn('slot_id', daySlotsId).where('user_id', user.id);
-    
+
         if (bookings.length > 0) {
           return response.status(403).json({
             error: "Vous avez déjà réservé un créneau pour aujourd'hui"
           })
         } else {
-          await user.bookings().attach(slot);
           slot.number_max = parseInt(slot.number_max)-1;
           await slot.save();
-      
+          await user.bookings().save(slot);
           return response.status(200).json({
             'status': 'Success',
             slot

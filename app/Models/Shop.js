@@ -14,7 +14,7 @@ class Shop extends Model {
         return this.hasMany('App/Models/Schedule')
     }
     users_bookmarkers () {
-      return this.belongsToMany('App/Models/User').pivotModel('App/Models/Bookmark')
+        return this.hasMany('App/Models/Booking')
     }
     
 }

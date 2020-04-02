@@ -22,15 +22,23 @@ class BookmarkController {
   }
 
   async create({ request, auth, response, params }){
-    const bookmark = new Bookmark();
-    bookmark.user_id = auth.user.id;
-    bookmark.shop_id = params.shopId;
-    const user = auth.user;
-    await user.bookmarks().attach(bookmark);
-    return response.status(200).json({
-      status: 'Success',
-      bookmark
-    })
+    const shop = await Shop.find(params.shopId);
+    if(shop){
+      /*const bookmark = new Bookmark();
+      bookmark.user_id = auth.user.id;
+      bookmark.shop_id = params.shopId;*/
+      const user = auth.user;
+      await user.bookmarks().attach(shop.id);
+      return response.status(200).json({
+        status: 'Success',
+        shop
+      })
+    } else {
+      return response.status(404).json({
+        status: 'Error',
+        message: "No shop found"
+      })
+    }
   }
 
   async delete({ request, auth, response, params }){

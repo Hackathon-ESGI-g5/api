@@ -11,8 +11,7 @@ class ShopController {
   async getById({ request, auth, response, params }) {
     moment.locale('fr');
     const id = params.shopId;
-    const shop = await Shop.find(id);
-    const schedules = await shop.schedules().fetch();
+    const shop = await Shop.query().where('id', id).with('schedules').fetch();
 
     const today = moment().format('YYYY-MM-DD');
 
@@ -50,7 +49,6 @@ class ShopController {
     return response.status(200).json({
       status: "Success",
       shop,
-      schedules,
       slots_number: slots.length,
       slots: groupedSlots,
       days
@@ -58,7 +56,7 @@ class ShopController {
   }
 
   async getAll({ request, auth, response }){
-    const shops = await Shop.all();
+    const shops = await Shop.query().with('schedules').fetch();
     return response.status(200).json({
         status: "Success",
         rows: shops.rows.length,

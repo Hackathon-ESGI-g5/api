@@ -93,10 +93,10 @@ class ShopController {
     try {
       const user = await Persona.register({email, password, password_confirmation, firstname, lastname, role_id:2 });
       if(user.id != null){
-        const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate } = request.post();
+        const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner } = request.post();
         const shop = new Shop();
         shop.user_id = user.id;
-        this.saveShop(shop, label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate);
+        this.saveShop(shop, label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,0);
         try{
           await shop.save();
           return response.status(201).json({

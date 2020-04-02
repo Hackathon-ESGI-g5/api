@@ -1,5 +1,6 @@
 'use strict'
 const User = use('App/Models/User');
+const Persona = use('Persona');
 class UserController {
     async getById({ params, auth, response }) {
         const userId = params.userId;
@@ -34,36 +35,30 @@ class UserController {
     }
 
     async update({ request, auth, params, response }){
-        const payload = request.only(['firstname', 'lastname', 'profile_picture_url', 'address', 'zip_code', 'city', 'birth_date', 'phone_number', 'lat', 'lng', 'active_driver', 'iban', 'bic','driving_licence_path']);
+        const payload = request.only(['firstname', 'lastname', 'profil_picture_url']);
         const user = auth.user;
         try{
-            await Persona.updateProfile(user, {
-                'email': payload.email,
-                'password': payload.password,
-                'password_confirmation': payload.password_confirmation,
-                'firstname': payload.firstname,
-                'lastname': payload.lastname,
-                'profil_picture_url': payload.profil_picture_url,
-                'role_id': payload.role_id
-            });
+            await Persona.updateProfile(user, payload);
             return response.status(200).json({
                 user,
                 status: "Success",
-                msg:"User has been updated"
+                message:"User has been updated"
             })
         } catch(e) {
             return response.status(400).json({
                 status: "Error",
-                msg:"Error on user update"
+                message:"Error on user update",
+                stack_trace: e.message
             })
         }
     }
 
-    async delete({ request, auth, response }){
+    async delete({ params, auth, response }){
         const userId = params.userId;
         const user = await User.find(userId);
         if(user != null){
             try{
+                await user.tokens().delete();
                 await user.delete();
                 return response.status(200).json({
                     status: "Deletion succeed"

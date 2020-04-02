@@ -91,7 +91,7 @@ Route.group(() => {
 
 Route.group(() => {
   Route.post('/create', 'RoleController.create');
-  Route.put('/:roleId/update', 'RoleController.update');
+  Route.put('/:roleId/edit', 'RoleController.update');
   Route.delete('/:roleId/delete', 'RoleController.delete');
   Route.get('/all', 'RoleController.getAll');
   Route.get('/:roleId/show', 'RoleController.getById');

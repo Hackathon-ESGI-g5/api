@@ -2,7 +2,7 @@
 const Role = use('App/Models/Role');
 
 class RoleController {
-    async getByid({ request, auth, response }) {
+    async getById({ params, auth, response }) {
         const roleId = params.roleId;
         const role = await Role.find(roleId);
         if(role != null){
@@ -78,7 +78,7 @@ class RoleController {
         }
     }
 
-    async delete({ request, auth, response }){
+    async delete({ params, auth, response }){
         const roleId = params.roleId;
         const role = await Role.find(roleId);
         if(role != null){

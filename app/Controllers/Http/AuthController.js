@@ -5,9 +5,9 @@ const Persona = use('Persona');
 class AuthController {
 
   async register ({ request, response }) {
-    const payload = request.only(['email', 'password', 'password_confirmation', 'firstname', 'lastname', 'profil_picture_url', 'role_id']);
+    const payload = request.only(['email', 'password', 'password_confirmation', 'firstname', 'lastname', 'profil_picture_url']);
     try {
-      const user = await Persona.register(payload);
+      const user = await Persona.register({...payload,role_id:3});
       return response.status(200).json({
         user,
         status: 200,

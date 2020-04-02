@@ -77,9 +77,9 @@ class ShopController {
 
   async create({ request, auth, response }){
     console.log(request.post());
-    const {email, password, password_confirmation, firstname, lastname, role_id} = request.post();
+    const {email, password, password_confirmation, firstname, lastname} = request.post();
     try {
-      const user = await Persona.register({email, password, password_confirmation, firstname, lastname, role_id});
+      const user = await Persona.register({email, password, password_confirmation, firstname, lastname, role_id:2 });
       if(user.id != null){
         const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate } = request.post();
         const shop = new Shop();

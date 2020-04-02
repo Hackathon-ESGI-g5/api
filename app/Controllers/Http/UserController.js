@@ -1,10 +1,10 @@
 'use strict'
 
 class UserController {
-    async getById({ request, auth, response }) {
-        const payload = request.only(['id']);
+    async getById({ params, auth, response }) {
+        const userId = params.userId;
         try {
-            const user = await User.find(payload.id);
+            const user = await User.find(userId);
             return response.status(200).json({ user });
         } catch(e) {
             return response.status(400).json({
@@ -13,6 +13,11 @@ class UserController {
                 stack_trace: e
              });
         }
+    }
+
+    async getCurrentUser({auth,response}){
+        const user = auth.user;
+        return response.status(200).json({ user });
     }
 
     async getAll({ request, auth, response }){

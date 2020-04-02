@@ -4,6 +4,7 @@ const Shop = use('App/Models/Shop');
 const Database = use('Database');
 const Persona = use('Persona');
 const moment = use('moment');
+const Slot = use('App/Models/Slot');
 
 class ShopController {
 
@@ -14,12 +15,23 @@ class ShopController {
     const schedules = await shop.schedules().fetch();
 
     const today = moment().format('YYYY-MM-DD');
-    let slots = await Database.table('slots').where('shop_id', id).where('begin_at', '>=', today).orderBy('begin_at', 'asc');
+
+    let slots = await Slot.query()
+      .where('shop_id', id)
+      .where('begin_at', '>=', today)
+      .orderBy('begin_at', 'asc')
+      .with('bookings', (builder) => {
+        builder.where('user_id', auth.user.id)
+      })
+      .fetch()
+    ;
+
+    slots = slots.toJSON();
     slots = slots.map(slot => ( {
       ...slot,
       formattedDay: moment(slot.begin_at).format('YYYY-MM-DD'),
       formattedHour: moment(slot.begin_at).format('HH:mm')
-    }) );
+    }));
 
     const groupedSlots = {};
     slots.forEach(slot => {
@@ -35,7 +47,7 @@ class ShopController {
       days[date] = moment(date).format('dddd Do MMMM YYYY')
     });
 
-    return response.status(201).json({
+    return response.status(200).json({
       status: "Success",
       shop,
       schedules,

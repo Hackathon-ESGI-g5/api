@@ -38,6 +38,7 @@ class ShopController {
       status: "Success",
       shop,
       schedules,
+      slots_number: slots.length,
       slots: groupedSlots,
       days
     });

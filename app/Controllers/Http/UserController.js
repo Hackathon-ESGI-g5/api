@@ -28,19 +28,28 @@ class UserController {
         }
     }
 
-    async update({ request, auth, response }){
-        const payload = request.only(['email', 'password', 'password_confirmation', 'firstname', 'lastname', 'profil_picture_url', 'role_id']);
-        try {
-            const user = await Persona.register(payload);
+    async update({ request, auth, params, response }){
+        const payload = request.only(['firstname', 'lastname', 'profile_picture_url', 'address', 'zip_code', 'city', 'birth_date', 'phone_number', 'lat', 'lng', 'active_driver', 'iban', 'bic','driving_licence_path']);
+        const user = auth.user;
+        try{
+            await Persona.updateProfile(user, {
+                'email': payload.email,
+                'password': payload.password,
+                'password_confirmation': payload.password_confirmation,
+                'firstname': payload.firstname,
+                'lastname': payload.lastname,
+                'profil_picture_url': payload.profil_picture_url,
+                'role_id': payload.role_id
+            });
             return response.status(200).json({
                 user,
-                status: 200,
-                message: 'Client account created successfully',
+                status: "Success",
+                msg:"User has been updated"
             })
         } catch(e) {
             return response.status(400).json({
-                status: 400,
-                message: 'Error on registration',
+                status: "Error",
+                msg:"Error on user update"
             })
         }
     }

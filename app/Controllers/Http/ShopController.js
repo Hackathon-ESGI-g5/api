@@ -16,45 +16,53 @@ class ShopController {
       builder.orderBy('id', 'asc')
     }).fetch();
     shop = shop.toJSON()[0];
+    if(shop != null){
+      const today = moment().format('YYYY-MM-DD');
 
-    const today = moment().format('YYYY-MM-DD');
+      let slots = await Slot.query()
+        .where('shop_id', shop.id)
+        .where('begin_at', '>=', today)
+        .orderBy('begin_at', 'asc')
+        .with('bookings', (builder) => {
+          builder.where('user_id', user.id)
+        }).fetch();
 
-    let slots = await Slot.query()
-      .where('shop_id', shop.id)
-      .where('begin_at', '>=', today)
-      .orderBy('begin_at', 'asc')
-      .with('bookings', (builder) => {
-        builder.where('user_id', user.id)
-      }).fetch();
+      slots = slots.toJSON();
+      slots = slots.map(slot => ( {
+        ...slot,
+        formattedDay: moment(slot.begin_at).format('YYYY-MM-DD'),
+        formattedHour: moment(slot.begin_at).format('HH:mm')
+      }));
 
-    slots = slots.toJSON();
-    slots = slots.map(slot => ( {
-      ...slot,
-      formattedDay: moment(slot.begin_at).format('YYYY-MM-DD'),
-      formattedHour: moment(slot.begin_at).format('HH:mm')
-    }));
+      const groupedSlots = {};
+      slots.forEach(slot => {
+        if (!(slot.formattedDay in groupedSlots)) {
+          groupedSlots[slot.formattedDay] = [];
+        }
+        groupedSlots[slot.formattedDay].push(slot);
+      });
 
-    const groupedSlots = {};
-    slots.forEach(slot => {
-      if (!(slot.formattedDay in groupedSlots)) {
-        groupedSlots[slot.formattedDay] = [];
-      }
-      groupedSlots[slot.formattedDay].push(slot);
-    });
+      const days = {};
+      const daysDate = Object.keys(groupedSlots);
+      daysDate.forEach(date => {
+        days[date] = moment(date).format('dddd Do MMMM YYYY')
+      });
 
-    const days = {};
-    const daysDate = Object.keys(groupedSlots);
-    daysDate.forEach(date => {
-      days[date] = moment(date).format('dddd Do MMMM YYYY')
-    });
+      return response.status(200).json({
+        status: "Success",
+        shop,
+        slots_number: slots.length,
+        slots: groupedSlots,
+        days
+      });
+    } else {
+      return response.status(404).json({
+        status: "Error",
+        message: "No shops for current user"
+      });
+    }
 
-    return response.status(200).json({
-      status: "Success",
-      shop,
-      slots_number: slots.length,
-      slots: groupedSlots,
-      days
-    });
+    
   }
 
   async getById({ request, auth, response, params }) {

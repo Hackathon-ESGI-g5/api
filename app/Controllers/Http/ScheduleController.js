@@ -40,9 +40,9 @@ class ScheduleController {
         }
     }
 
-    async getByStatus({ request, auth, response }){
+    async getByStatus({ params, auth, response }){
         const status = params.status;
-        const schedules = await Schedule.query().where("isopen", status).fetch;
+        const schedules = await Schedule.query().where("isopen", status).fetch();
         if(schedules.rows.length > 0){
             return response.status(200).json({
                 status: "Success",

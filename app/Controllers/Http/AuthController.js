@@ -26,9 +26,17 @@ class AuthController {
   async login ({ request, auth, response }) {
     const payload = request.only(['uid', 'password']);
     const { uid, password } = payload;
-    await Persona.verify(payload);
-    const { token } = await auth.attempt(uid, password);
-    return response.ok({ token });
+    try{
+      await Persona.verify(payload);
+      const { token } = await auth.attempt(uid, password);
+      return response.status(200).json({ token });
+    } catch(e) {
+      return response.status(400).json({ 
+        status: "Error",
+        message: "Error on login",
+        stack_trace: e.message
+       });
+    }
   }
 
   async forgotPassword ({ request, response }) {

@@ -46,7 +46,7 @@ Route.group(() => {
   Route.post('/:shopId/create', 'ScheduleController.create');
   Route.put('/:id/edit', 'ScheduleController.update');
   Route.get('/all', 'ScheduleController.getAll');
-  Route.get('/byid/:id', 'ScheduleController.getAll');
+  Route.get('/:id/show', 'ScheduleController.getAll');
   Route.get('/shop/:shopId', 'ScheduleController.getByShop');
   Route.get('/status/:status', 'ScheduleController.getByStatus');
 }).prefix('/schedule').middleware('auth');
@@ -68,7 +68,7 @@ Route.group(() => {
   Route.put('/:postId/update', 'PostController.update');
   Route.delete('/:postId', 'PostController.delete');
   Route.get('/all', 'PostController.getAll');
-  Route.get('/byid/:postId', 'PostController.getById');
+  Route.get('/:postId/show', 'PostController.getById');
   Route.get('/store/:storeId', 'PostController.getById');
 }).prefix('/post').middleware('auth');
 
@@ -77,5 +77,5 @@ Route.group(() => {
   Route.put('/:roleId/update', 'RoleController.update');
   Route.delete('/:roleId', 'RoleController.delete');
   Route.get('/all', 'RoleController.getAll');
-  Route.get('/byid/:roleId', 'RoleController.getById');
+  Route.get('/:roleId/show', 'RoleController.getById');
 }).prefix('/role').middleware('auth');

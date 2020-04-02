@@ -40,6 +40,7 @@ Route.group(() => {
 }).prefix('/shop')
 
 Route.group(() => {
+  Route.get('/show', 'ShopController.getByUser');
   Route.get('/:shopId/show', 'ShopController.getById');
   Route.put('/:shopId/edit', 'ShopController.update');
   Route.delete('/:shopId/delete', 'ShopController.delete');

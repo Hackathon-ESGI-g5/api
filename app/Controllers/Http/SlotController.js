@@ -160,7 +160,7 @@ class SlotController {
 
     }
 
-    async delete({ request, auth, response }){
+    async delete({ params, auth, response }){
         const slotId = params.slotId;
         const slot = await Slot.find(slotId);
         if(slot != null){

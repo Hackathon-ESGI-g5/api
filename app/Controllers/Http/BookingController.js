@@ -18,8 +18,9 @@ class BookingController {
     
         // check if user already book a slot for today
         const slotDate = moment(slot.begin_at).format('YYYY-MM-DD');
-        const daySlots = await Database.table('slots').select('id').where('shop_id', shopId).where('begin_at', 'like', `%${slotDate}%`);
-        const daySlotsId = daySlots.map(slot => slot.id);
+        console.log("slotDate !! ",slotDate);
+        const daySlots = await Slot.query().where('shop_id', shopId).andWhereBetween('begin_at', [slotDate,slotDate]).setVisible('id').fetch();
+        const daySlotsId = daySlots.rows.map(slot => slot.id);
         const bookings = await Database.table('bookings').whereIn('slot_id', daySlotsId).where('user_id', user.id);
     
         if (bookings.length > 0) {
@@ -27,7 +28,7 @@ class BookingController {
             error: "Vous avez déjà réservé un créneau pour aujourd'hui"
           })
         } else {
-          await user.bookings().save(slot);
+          await user.bookings().attach(slot);
           slot.number_max = parseInt(slot.number_max)-1;
           await slot.save();
       

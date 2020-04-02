@@ -157,6 +157,7 @@ class ScheduleController {
                     .where('begin_at', '>', currentdate.format())
                     .andWhere('end_at', '<', tomorrow.format())
                     .andWhere('day', '=', schedule.day)
+                    .andWhere('shop_id', '=', schedule.shop_id)
                     .fetch();
                 if(slots.rows.length > 0){ // SLOTS of a day
                     var number_slots_without_booking = 0;
@@ -171,6 +172,7 @@ class ScheduleController {
                             .where('begin_at', '>', currentdate.format())
                             .andWhere('end_at', '<', tomorrow.format())
                             .andWhere('day', '=', schedule.day)
+                            .andWhere('shop_id', '=', schedule.shop_id)
                             .delete();
                         console.log("Slots deleted between "+currentdate.format()+" and "+tomorrow.format());
                     }
@@ -193,7 +195,9 @@ class ScheduleController {
                 .where('begin_at', '>', currentdate.format())
                 .andWhere('end_at', '<', in_two_weeks.format())
                 .andWhere('day', '=', schedule.day)
+                .andWhere('shop_id', '=', schedule.shop_id)
                 .fetch();
+            console.log(slots.rows);
             if(slots.rows.length > 0){
                     //calculate timestamps for open/close datetime in each slot.
                 const openH = moment(schedule.open_hour, "H:mm").format("HH");
@@ -268,7 +272,7 @@ class ScheduleController {
         
     }
 
-    async delete({ request, auth, response }){
+    async delete({ params, auth, response }){
         // TODO : handle relations delete
         const schedule = await Schedule.find(params.scheduleId);
         if(schedule != null){

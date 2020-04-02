@@ -35,15 +35,19 @@ Route.group(() => {
 }).prefix('/user').middleware('auth');
 
 Route.group(() => {
+  Route.get('/all', 'ShopController.getAll');
+  Route.post('/search', 'ShopController.search');
+}).prefix('/shop')
+
+Route.group(() => {
   Route.get('/:shopId/show', 'ShopController.getById');
   Route.put('/:shopId/edit', 'ShopController.update');
   Route.delete('/:shopId/delete', 'ShopController.delete');
 }).prefix('/shop').middleware('auth');
 
 Route.group(() => {
-  Route.get('/all', 'ShopController.getAll');
-  Route.post('/search', 'ShopController.search');
-}).prefix('/shop').middleware('guest');
+  Route.get('/shop/:shopId/show', 'SlotController.getByShop');
+}).prefix('/slot')
 
 Route.group(() => {
   //Route.post('/create', 'SlotController.create');
@@ -53,10 +57,6 @@ Route.group(() => {
   Route.put('/:slotId/edit', 'SlotController.update');
   Route.delete('/:slotId/delete', 'SlotController.delete');
 }).prefix('/slot').middleware('auth');
-
-Route.group(() => {
-  Route.get('/byshop/:shopId/show', 'SlotController.getByShop');
-}).prefix('/slot').middleware('guest');
 
 Route.group(() => {
   Route.post('/:shopId/create', 'ScheduleController.create');

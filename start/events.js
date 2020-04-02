@@ -13,19 +13,29 @@ Event.on('forgot::password', async (forgot_data) => {
         message.subject('Mot de passe oublié | SAFESHOP.fr')
     })
 })
-Event.on('password::recovered', async (user) => {
+Event.on('password::recovered', async (data) => {
     console.log("Event password recovered");
-    await Mail.send('emails.password_changed', {user}, (message) => {
+    const user = data.user;
+    await Mail.send('emails.password_changed', {
+        firstname: user.firstname,
+        lastname: user.lastname,
+        link:Env.get('FRONT_URL')
+    }, (message) => {
+        console.log(user);
         message.to(user.email)
         message.from(`SAFESHOP<${Env.get('MAIL_SENDER')}>`)
         message.subject('Mot de passe changé | SAFESHOP.fr')
     })
 })
-Event.on('password::changed	', async (user) => {
+Event.on('password::changed	', async (data) => {
     console.log("Event password changed");
-    await Mail.send('emails.password_changed', {user}, (message) => {
+    const user = data.user;
+    await Mail.send('emails.password_changed', {
+        firstname: user.firstname,
+        lastname: user.lastname,
+        link:Env.get('FRONT_URL')
+    }, (message) => {
         message.to(user.email)
-        message.from(Env.get('MAIL_SENDER'))
         message.from(`SAFESHOP<${Env.get('MAIL_SENDER')}>`)
         message.subject('Mot de passe changé | SAFESHOP.fr')
     })

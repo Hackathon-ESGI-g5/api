@@ -36,10 +36,12 @@ class AuthController {
     });
   }
 
-  async updatePasswordByToken ({ request }) {
-    const token = request.input('token');
-    const payload = request.only(['password', 'password_confirmation']);
-    await Persona.updatePasswordByToken(token, payload);
+  async updatePasswordByToken ({ request, params }) {
+    const payload = request.only(['password', 'password_confirmation','token']);
+    await Persona.updatePasswordByToken(payload.token, {password: payload.password,password_confirmation: payload.password_confirmation});
+    return response.status('200').json({
+      message: "Password changed!"
+    });
   }
 
 }

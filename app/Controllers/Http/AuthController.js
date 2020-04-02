@@ -5,9 +5,9 @@ const Persona = use('Persona');
 class AuthController {
 
   async register ({ request, response }) {
-    const payload = request.only(['email', 'password', 'password_confirmation', 'firstname', 'lastname', 'profil_picture_url', 'role_id']);
+    const payload = request.only(['email', 'password', 'password_confirmation', 'firstname', 'lastname', 'profil_picture_url']);
     try {
-      const user = await Persona.register(payload);
+      const user = await Persona.register({...payload,role_id:3});
       return response.status(200).json({
         user,
         status: 200,
@@ -31,12 +31,17 @@ class AuthController {
 
   async forgotPassword ({ request, response }) {
     await Persona.forgotPassword(request.input('uid'));
+    return response.status('200').json({
+      message: "Mail sended to reset password"
+    });
   }
 
-  async updatePasswordByToken ({ request }) {
-    const token = request.input('token');
-    const payload = request.only(['password', 'password_confirmation']);
-    await Persona.updatePasswordByToken(token, payload);
+  async updatePasswordByToken ({ request, params }) {
+    const payload = request.only(['password', 'password_confirmation','token']);
+    await Persona.updatePasswordByToken(payload.token, {password: payload.password,password_confirmation: payload.password_confirmation});
+    return response.status('200').json({
+      message: "Password changed!"
+    });
   }
 
 }

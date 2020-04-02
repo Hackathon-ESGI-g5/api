@@ -6,7 +6,7 @@ const moment = use('moment')
 
 class SlotController {
     async getById({ params, auth, response }) {
-        const slot_id = params.id;
+        const slot_id = params.slotId;
         try{
             const slot = await Slot.find(slot_id);
             return response.status(200).json({
@@ -23,9 +23,9 @@ class SlotController {
     }
 
     async getByShop({ params, auth, response }){
-        const shop_id = params.shop_id
+        const shopId = params.shopId
         try{
-            const slots = await Slot.query().where('shop_id', shop_id).fetch();
+            const slots = await Slot.query().where('shop_id', shopId).fetch();
             return response.status(200).json({
                 status: "Success",
                 rows: slots.rows.length,
@@ -57,12 +57,12 @@ class SlotController {
         }
     }
 
-    async generate({ request, auth, response }){
-        const payload = request.only(['shop_id', 'start_datetime', 'end_datetime']);
+    async generate({ params, auth, response }){
+        const shopId = params.shopId;
         //generate slots for a shop
 
         //get all schedules for a shop
-        const schedules = await Schedule.query().where('shop_id', payload.shop_id).fetch();
+        const schedules = await Schedule.query().where('shop_id', shopId).fetch();
 
         const days = {
             1: "Monday",
@@ -115,7 +115,7 @@ class SlotController {
                         .fetch();
                     if(slots.rows.length == 0){
                         const slot = new Slot();
-                        slot.shop_id = payload.shop_id;
+                        slot.shop_id = shopId;
                         slot.begin_at = b;
                             //add value and increment for while loop
                         slot.end_at = e;
@@ -137,13 +137,26 @@ class SlotController {
         });
     }
 
-    async create({ request, auth, response }){
-
-    }
-
-    async update({ request, auth, response }){
-        const payload = request.only(['shop_id']);
-
+    async update({ params, request, auth, response }){
+        const slotId = params.slotId
+        const {begin_at,end_at,number_max,day} = request.post();
+        const slot = await Slot.find(slotId);
+        if(slot != null){
+            slot.begin_at = begin_at;
+            slot.end_at = end_at;
+            slot.number_max = number_max;
+            slot.day = day;
+            await slot.save();
+            return response.status(200).json({
+                status: "Success",
+                slot
+            });
+        } else {
+            return response.status(400).json({
+                status: "Error",
+                message: "Slot not found"
+            })
+        }
 
     }
 

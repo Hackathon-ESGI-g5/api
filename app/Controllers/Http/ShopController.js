@@ -2,6 +2,7 @@
 
 const Shop = use('App/Models/Shop');
 const Database = use('Database');
+const Persona = use('Persona');
 const moment = use('moment');
 const Slot = use('App/Models/Slot');
 
@@ -9,7 +10,7 @@ class ShopController {
 
   async getById({ request, auth, response, params }) {
     moment.locale('fr');
-    const id = params.id;
+    const id = params.shopId;
     const shop = await Shop.find(id);
     const schedules = await shop.schedules().fetch();
 
@@ -50,6 +51,7 @@ class ShopController {
       status: "Success",
       shop,
       schedules,
+      slots_number: slots.length,
       slots: groupedSlots,
       days
     });
@@ -86,23 +88,36 @@ class ShopController {
   }
 
   async create({ request, auth, response }){
-
-    const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate } = request.post();
-    const shop = new Shop();
-    shop.user_id = auth.user.id;
-    this.saveShop(shop, label, address, zip_code, city,phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate);
-    try{
-      await shop.save();
-      return response.status(201).json({
-        status: "Success",
-        shop
-      });
+    console.log(request.post());
+    const {email, password, password_confirmation, firstname, lastname} = request.post();
+    try {
+      const user = await Persona.register({email, password, password_confirmation, firstname, lastname, role_id:2 });
+      if(user.id != null){
+        const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate } = request.post();
+        const shop = new Shop();
+        shop.user_id = user.id;
+        this.saveShop(shop, label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate);
+        try{
+          await shop.save();
+          return response.status(201).json({
+            status: "Shop successfully created",
+            user,
+            shop
+          });
+        } catch(e) {
+          return response.status(400).json({
+            status: "Error",
+            message: "An error occured on Shop creation",
+            stack_trace: e
+          });
+        }
+      }
     } catch(e) {
-      return response.status(400).json({
-        status: "Error",
-        message: "An error occured on create Shop",
-        stack_trace: e
-      });
+        return response.status(400).json({
+          status: 400,
+          message: 'Error on user registration',
+          stack_trace: e.message
+        })
     }
   }
 
@@ -124,7 +139,7 @@ class ShopController {
 
   async update({ request, response, params }){
     const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate } = request.post();
-    const shop = await Shop.find(params.id);
+    const shop = await Shop.find(params.shopId);
     this.saveShop(shop, label, address, zip_code, city,phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate);
     try{
       await shop.save();
@@ -143,10 +158,10 @@ class ShopController {
 
   async delete({ request, auth, response, params }){
     // TODO : handle relations delete
-    const shop = await Shop.find(params.id);
+    const shop = await Shop.find(params.shopId);
     await shop.delete();
     return response.status(200).json({
-      status: `Shop ${params.id} deleted`,
+      status: `Shop ${params.shopId} deleted`,
     });
   }
 }

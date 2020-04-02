@@ -7,7 +7,19 @@ const moment = use('moment')
 
 class ScheduleController {
     async getByid({ request, auth, response }) {
-
+        const scheculeId = params.scheduleId;
+        const schedule = await Schedule.find(scheculeId);
+        if(schedule != null){
+            return response.status(200).json({
+                status: "Success",
+                schedule
+            });
+        } else {
+            return response.status(404).json({
+                status: "Error",
+                message: "Schedule doesn't exists"
+            });
+        }
     }
 
     async getByShop({ request, auth, params, response }){
@@ -29,7 +41,20 @@ class ScheduleController {
     }
 
     async getByStatus({ request, auth, response }){
-
+        const status = params.status;
+        const schedules = await Schedule.query().where("isopen", status).fetch;
+        if(schedules.rows.length > 0){
+            return response.status(200).json({
+                status: "Success",
+                rows: schedules.rows.length,
+                schedules
+            });
+        } else {
+            return response.status(404).json({
+                status: "Error",
+                message: "No Schedule found"
+            });
+        }
     }
 
     async getAll({ request, auth, response }){
@@ -73,7 +98,7 @@ class ScheduleController {
     }
 
     async update({ request, params, auth, response }){
-        const schedule_id = params.id;
+        const schedule_id = params.scheduleId;
         const { open_hour, close_hour, interval, day, isopen, number_max } = request.post();
         //const schedule = Schedule.query().where("shop_id",shopId).andWhere("day",day).first();
         const schedule = await Schedule.find(schedule_id);
@@ -208,36 +233,55 @@ class ScheduleController {
                 .where('begin_at', '>', currentdate.format())
                 .andWhere('end_at', '<', in_two_weeks.format())
                 .andWhere('day', '=', schedule.day)
+                .andWhere('shop_id', '=', schedule.shop_id)
                 .fetch();
             if(slots.rows.length > 0){
                 for(let i in slots.rows){
                     console.log("older_numbermax : ",older_numbermax);
                     console.log("new_numbermax : ",schedule.number_max);
                     if(slots.rows[i].number_max == older_numbermax){ // if no booking on slots, juste update the number by the new
-                        const slot = await Slot.find(slots.rows[i].id);
+                        /*const slot = await Slot.find(slots.rows[i].id);
                         slot.number_max = schedule.number_max;
-                        await slot.save();
+                        await slot.save();*/
                     } else { // if a slot had booking, count them
                         const bookings = await Booking.query().where("slot_id",slots.rows[i].id).fetch()
                         if(bookings.rows.length >= schedule.number_max){ // if slot has more or equal number of booking than the new number_max, then put slot's number_max to 0
-                            const slot = await Slot.find(slots.rows[i].id);
+                            /*const slot = await Slot.find(slots.rows[i].id);
                             slot.number_max = 0;
-                            await slot.save();
+                            await slot.save();*/
                         } else if(bookings.rows.length < schedule.number_max){ // if slot has less number of booking than the new number_max, then put slot's number_max to difference between booking's and new number_max
-                            const slot = await Slot.find(slots.rows[i].id);
+                            /*const slot = await Slot.find(slots.rows[i].id);
                             slot.number_max = schedule.number_max-bookings.rows.length;
-                            await slot.save();
+                            await slot.save();*/
                         }
                     }
                 }
             }
             console.log("==== Update on numbermax complete");
         }
+
+        //generate needed after deletion
+        /*SlotController.generate({request: {
+                shop_id: schedule.shop_id
+            }
+        });*/
         
     }
 
     async delete({ request, auth, response }){
-
+        // TODO : handle relations delete
+        const schedule = await Schedule.find(params.scheduleId);
+        if(schedule != null){
+            await schedule.delete();
+            return response.status(200).json({
+                status: `Schedule ${params.scheduleId} deleted`,
+            });
+        } else {
+            return response.status(400).json({
+                status: `Error`,
+                message: "Error on delete Schedule"
+            });
+        }
     }
 }
 

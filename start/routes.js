@@ -18,6 +18,7 @@ const Route = use('Route')
 
 Route.post('update-password-by-token', 'AuthController.updatePasswordByToken');
 Route.post('register', 'AuthController.register');
+Route.post('register_shop', 'ShopController.create');
 Route.post('login', 'AuthController.login');
 Route.post('forgot-password', 'AuthController.forgotPassword');
 
@@ -26,35 +27,45 @@ Route.get('/', () => {
 })
 
 Route.group(() => {
-  Route.post('/create', 'ShopController.create');
-  Route.get('/:id/show', 'ShopController.getById');
-  Route.put('/:id/edit', 'ShopController.update');
+  Route.get('/all', 'UserController.getAll');
+  Route.get('/:id/show', 'UserController.getById');
+  Route.put('/:id/edit', 'UserController.update');
+  Route.delete('/:id/delete', 'UserController.delete');
+}).prefix('/user').middleware('auth');
+
+Route.group(() => {
+  Route.get('/all', 'ShopController.getAll');
+  Route.get('/:shopId/show', 'ShopController.getById');
+  Route.put('/:shopId/edit', 'ShopController.update');
   Route.post('/search', 'ShopController.search');
-  Route.delete('/:id/delete', 'ShopController.delete');
+  Route.delete('/:shopId/delete', 'ShopController.delete');
 }).prefix('/shop').middleware('auth');
 
 Route.group(() => {
   //Route.post('/create', 'SlotController.create');
-  Route.post('/generate', 'SlotController.generate');
-  Route.get('/:id/show', 'SlotController.getById');
-  Route.get('/byshop/:shop_id', 'SlotController.getByShop');
+  Route.post('/:shopId/generate', 'SlotController.generate');
   Route.get('/all', 'SlotController.getAll');
-  Route.put('/:id/edit', 'SlotController.update');
+  Route.get('/byshop/:shopId/show', 'SlotController.getByShop');
+  Route.get('/:slotId/show', 'SlotController.getById');
+  Route.put('/:slotId/edit', 'SlotController.update');
+  Route.delete('/:slotId/delete', 'SlotController.delete');
 }).prefix('/slot').middleware('auth');
 
 Route.group(() => {
   Route.post('/:shopId/create', 'ScheduleController.create');
-  Route.put('/:id/edit', 'ScheduleController.update');
+  Route.put('/:scheduleId/edit', 'ScheduleController.update');
   Route.get('/all', 'ScheduleController.getAll');
-  Route.get('/byid/:id', 'ScheduleController.getAll');
-  Route.get('/shop/:shopId', 'ScheduleController.getByShop');
+  Route.get('/shop/:shopId/show', 'ScheduleController.getByShop');
+  Route.get('/status/:status/show', 'ScheduleController.getByStatus');
+  Route.get('/:scheduleId/show', 'ScheduleController.getById');
+  Route.delete('/:scheduleId/delete', 'ScheduleController.delete');
 }).prefix('/schedule').middleware('auth');
 
 Route.group(() => {
   Route.post('/:slotId/create', 'BookingController.create')
-  Route.delete('/:slotId','BookingController.delete')
-  Route.get('/user/','BookingController.getByUser')
-  Route.get('/shop/:shopId','BookingController.getByShop')
+  Route.delete('/:slotId/delete','BookingController.delete')
+  Route.get('/user/show','BookingController.getByUser')
+  Route.get('/shop/:shopId/show','BookingController.getByShop')
 }).prefix('/booking').middleware('auth');
 
 Route.group(() => {
@@ -63,18 +74,20 @@ Route.group(() => {
 }).prefix('/bookmark').middleware('auth');
 
 Route.group(() => {
-  Route.post('/:storeId/create', 'PostController.create');
+  Route.post('/:shopId/create', 'PostController.create');
   Route.put('/:postId/update', 'PostController.update');
-  Route.delete('/:postId', 'PostController.delete');
+  Route.delete('/:postId/delete', 'PostController.delete');
   Route.get('/all', 'PostController.getAll');
-  Route.get('/byid/:postId', 'PostController.getById');
-  Route.get('/store/:storeId', 'PostController.getById');
+  Route.get('/shop/:shopId.show', 'PostController.getByShop');
+  Route.get('/:postId/show', 'PostController.getById');
 }).prefix('/post').middleware('auth');
 
 Route.group(() => {
-  Route.post('/:storeId/create', 'RoleController.create');
+  Route.post('/create', 'RoleController.create');
   Route.put('/:roleId/update', 'RoleController.update');
-  Route.delete('/:roleId', 'RoleController.delete');
+  Route.delete('/:roleId/delete', 'RoleController.delete');
   Route.get('/all', 'RoleController.getAll');
-  Route.get('/byid/:roleId', 'RoleController.getById');
+  Route.get('/:roleId/show', 'RoleController.getById');
 }).prefix('/role').middleware('auth');
+
+

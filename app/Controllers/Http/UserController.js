@@ -1,7 +1,7 @@
 'use strict'
 
 class UserController {
-    async getByid({ request, auth, response }) {
+    async getById({ request, auth, response }) {
         const payload = request.only(['id']);
         try {
             const user = await User.find(payload.id);

@@ -11,8 +11,12 @@ class ShopController {
   async getById({ request, auth, response, params }) {
     moment.locale('fr');
     const id = params.shopId;
-    const shop = await Shop.find(id);
-    await shop.load('schedules');
+
+    let shop = await Shop.query().where('id', id).with('schedules', (builder) => {
+      builder.orderBy('id', 'asc')
+    }).fetch();
+    shop = shop.toJSON()[0];
+
     const today = moment().format('YYYY-MM-DD');
 
     let slots = await Slot.query()
@@ -56,7 +60,9 @@ class ShopController {
   }
 
   async getAll({ request, auth, response }){
-    const shops = await Shop.query().with('schedules').fetch();
+    const shops = await Shop.query().with('schedules', (builder) => {
+      builder.orderBy('id', 'asc')
+    }).fetch();
     return response.status(200).json({
         status: "Success",
         rows: shops.rows.length,

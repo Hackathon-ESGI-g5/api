@@ -8,7 +8,7 @@ class ShopController {
 
   async getById({ request, auth, response, params }) {
     moment.locale('fr');
-    const id = params.id;
+    const id = params.shopId;
     const shop = await Shop.find(id);
     const schedules = await shop.schedules().fetch();
 
@@ -113,7 +113,7 @@ class ShopController {
 
   async update({ request, response, params }){
     const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate } = request.post();
-    const shop = await Shop.find(params.id);
+    const shop = await Shop.find(params.shopId);
     this.saveShop(shop, label, address, zip_code, city,phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate);
     try{
       await shop.save();
@@ -132,10 +132,10 @@ class ShopController {
 
   async delete({ request, auth, response, params }){
     // TODO : handle relations delete
-    const shop = await Shop.find(params.id);
+    const shop = await Shop.find(params.shopId);
     await shop.delete();
     return response.status(200).json({
-      status: `Shop ${params.id} deleted`,
+      status: `Shop ${params.shopId} deleted`,
     });
   }
 }

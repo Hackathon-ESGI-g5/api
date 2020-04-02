@@ -18,9 +18,9 @@ class PostController {
         }
     }
 
-    async getByStore({ request, auth, response }){
-        const storeId = params.storeId;
-        const post = await Post.query().where("store_id",storeId).first();
+    async getByShop({ request, auth, response }){
+        const shopId = params.shopId;
+        const post = await Post.query().where("store_id",shopId).first();
         if(post != null){
             return response.status(200).json({
                 status: "Success",

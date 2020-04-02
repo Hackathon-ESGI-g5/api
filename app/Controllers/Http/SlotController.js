@@ -6,7 +6,7 @@ const moment = use('moment')
 
 class SlotController {
     async getById({ params, auth, response }) {
-        const slot_id = params.id;
+        const slot_id = params.slotId;
         try{
             const slot = await Slot.find(slot_id);
             return response.status(200).json({
@@ -23,9 +23,9 @@ class SlotController {
     }
 
     async getByShop({ params, auth, response }){
-        const shop_id = params.shop_id
+        const shopId = params.shopId
         try{
-            const slots = await Slot.query().where('shop_id', shop_id).fetch();
+            const slots = await Slot.query().where('shop_id', shopId).fetch();
             return response.status(200).json({
                 status: "Success",
                 rows: slots.rows.length,

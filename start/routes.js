@@ -28,8 +28,9 @@ Route.get('/', () => {
 
 Route.group(() => {
   Route.get('/all', 'UserController.getAll');
-  Route.get('/:id/show', 'UserController.getById');
-  Route.put('/:id/edit', 'UserController.update');
+  Route.get('/current-user', 'UserController.getCurrentUser');
+  Route.get('/:userId/show', 'UserController.getById');
+  Route.put('/edit', 'UserController.update');
   Route.delete('/:id/delete', 'UserController.delete');
 }).prefix('/user').middleware('auth');
 

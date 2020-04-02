@@ -1,5 +1,5 @@
 'use strict'
-
+const User = use('App/Models/User');
 class UserController {
     async getById({ params, auth, response }) {
         const userId = params.userId;
@@ -28,7 +28,7 @@ class UserController {
             return response.status(400).json({ 
                 status: 400,
                 message: "Error on getting users",
-                stack_trace: e
+                stack_trace: e.message
              });
         }
     }

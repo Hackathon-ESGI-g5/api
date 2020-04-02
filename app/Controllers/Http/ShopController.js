@@ -2,6 +2,7 @@
 
 const Shop = use('App/Models/Shop');
 const Database = use('Database');
+const Persona = use('Persona');
 const moment = use('moment');
 
 class ShopController {
@@ -75,14 +76,15 @@ class ShopController {
   }
 
   async create({ request, auth, response }){
-    const payload = request.only(['email', 'password', 'password_confirmation', 'firstname', 'lastname', 'profil_picture_url', 'role_id']);
+    console.log(request.post());
+    const {email, password, password_confirmation, firstname, lastname, role_id} = request.post();
     try {
-      const user = await Persona.register(payload);
-      if(user != null){
+      const user = await Persona.register({email, password, password_confirmation, firstname, lastname, role_id});
+      if(user.id != null){
         const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate } = request.post();
         const shop = new Shop();
-        shop.user_id = auth.user.id;
-        this.saveShop(shop, label, address, zip_code, city,phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate);
+        shop.user_id = user.id;
+        this.saveShop(shop, label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate);
         try{
           await shop.save();
           return response.status(201).json({
@@ -102,6 +104,7 @@ class ShopController {
         return response.status(400).json({
           status: 400,
           message: 'Error on user registration',
+          stack_trace: e.message
         })
     }
   }

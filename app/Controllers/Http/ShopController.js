@@ -1,18 +1,45 @@
 'use strict'
 
 const Shop = use('App/Models/Shop');
+const Database = use('Database');
+const moment = use('moment');
 
 class ShopController {
 
   async getById({ request, auth, response, params }) {
-    // TODO ADD SCHEDULES
+    moment.locale('fr');
     const id = params.id;
     const shop = await Shop.find(id);
     const schedules = await shop.schedules().fetch();
+
+    const today = moment().format('YYYY-MM-DD');
+    let slots = await Database.table('slots').where('shop_id', id).where('begin_at', '>=', today).orderBy('begin_at', 'asc');
+    slots = slots.map(slot => ( {
+      ...slot,
+      formattedDay: moment(slot.begin_at).format('YYYY-MM-DD'),
+      formattedHour: moment(slot.begin_at).format('HH:mm')
+    }) );
+
+    const groupedSlots = {};
+    slots.forEach(slot => {
+      if (!(slot.formattedDay in groupedSlots)) {
+        groupedSlots[slot.formattedDay] = [];
+      }
+      groupedSlots[slot.formattedDay].push(slot);
+    });
+
+    const days = {};
+    const daysDate = Object.keys(groupedSlots);
+    daysDate.forEach(date => {
+      days[date] = moment(date).format('dddd Do MMMM YYYY')
+    });
+
     return response.status(201).json({
       status: "Success",
       shop,
       schedules,
+      slots: groupedSlots,
+      days
     });
   }
 

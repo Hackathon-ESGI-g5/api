@@ -43,6 +43,7 @@ Route.group(() => {
 Route.group(() => {
   //Route.post('/create', 'SlotController.create');
   Route.post('/:shopId/generate', 'SlotController.generate');
+  Route.update('/:shopId/edit', 'SlotController.update');
   Route.get('/:id/show', 'SlotController.getById');
   Route.get('/byshop/:shop_id', 'SlotController.getByShop');
   Route.get('/all', 'SlotController.getAll');

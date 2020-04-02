@@ -137,8 +137,26 @@ class SlotController {
         });
     }
 
-    async update({ request, auth, response }){
-        const payload = request.only(['shop_id']);
+    async update({ params, request, auth, response }){
+        const slotId = params.slotId
+        const {begin_at,end_at,number_max,day} = request.post();
+        const slot = await Slot.find(slotId);
+        if(slot != null){
+            slot.begin_at = begin_at;
+            slot.end_at = end_at;
+            slot.number_max = number_max;
+            slot.day = day;
+            await slot.save();
+            return response.status(200).json({
+                status: "Success",
+                slot
+            });
+        } else {
+            return response.status(400).json({
+                status: "Error",
+                message: "Slot not found"
+            })
+        }
 
     }
 

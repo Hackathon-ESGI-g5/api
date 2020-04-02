@@ -11,8 +11,8 @@ class ShopController {
   async getById({ request, auth, response, params }) {
     moment.locale('fr');
     const id = params.shopId;
-    const shop = await Shop.query().where('id', id).with('schedules').fetch();
-
+    const shop = await Shop.find(id);
+    await shop.load('schedules');
     const today = moment().format('YYYY-MM-DD');
 
     let slots = await Slot.query()

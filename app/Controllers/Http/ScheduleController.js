@@ -6,7 +6,7 @@ const SlotController = use('App/Controllers/Http/SlotController');
 const moment = use('moment')
 
 class ScheduleController {
-    async getById({ request, auth, response }) {
+    async getById({ params, auth, response }) {
         const scheculeId = params.scheduleId;
         const schedule = await Schedule.find(scheculeId);
         if(schedule != null){

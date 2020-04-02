@@ -15,7 +15,7 @@ const Factory = use('Factory')
 
 class DatabaseSeeder {
   async run () {
-    const role = await Factory.model('App/Models/Role').create()
+    const role = await Factory.model('App/Models/Role').createMany(3)
   }
 }
 

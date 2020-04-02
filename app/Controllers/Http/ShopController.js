@@ -75,23 +75,33 @@ class ShopController {
   }
 
   async create({ request, auth, response }){
-
-    const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate } = request.post();
-    const shop = new Shop();
-    shop.user_id = auth.user.id;
-    this.saveShop(shop, label, address, zip_code, city,phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate);
-    try{
-      await shop.save();
-      return response.status(201).json({
-        status: "Success",
-        shop
-      });
+    const payload = request.only(['email', 'password', 'password_confirmation', 'firstname', 'lastname', 'profil_picture_url', 'role_id']);
+    try {
+      const user = await Persona.register(payload);
+      if(user != null){
+        const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate } = request.post();
+        const shop = new Shop();
+        shop.user_id = auth.user.id;
+        this.saveShop(shop, label, address, zip_code, city,phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate);
+        try{
+          await shop.save();
+          return response.status(201).json({
+            status: "Shop successfully created",
+            shop
+          });
+        } catch(e) {
+          return response.status(400).json({
+            status: "Error",
+            message: "An error occured on Shop creation",
+            stack_trace: e
+          });
+        }
+      }
     } catch(e) {
-      return response.status(400).json({
-        status: "Error",
-        message: "An error occured on create Shop",
-        stack_trace: e
-      });
+        return response.status(400).json({
+          status: 400,
+          message: 'Error on user registration',
+        })
     }
   }
 

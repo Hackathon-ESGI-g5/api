@@ -18,6 +18,7 @@ const Route = use('Route')
 
 Route.post('update-password-by-token', 'AuthController.updatePasswordByToken');
 Route.post('register', 'AuthController.register');
+Route.post('register_shop', 'ShopController.create');
 Route.post('login', 'AuthController.login');
 Route.post('forgot-password', 'AuthController.forgotPassword');
 
@@ -33,7 +34,6 @@ Route.group(() => {
 }).prefix('/user').middleware('auth');
 
 Route.group(() => {
-  Route.post('/create', 'ShopController.create');
   Route.get('/all', 'ShopController.getAll');
   Route.get('/:shopId/show', 'ShopController.getById');
   Route.put('/:shopId/edit', 'ShopController.update');

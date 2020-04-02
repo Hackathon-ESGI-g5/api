@@ -76,6 +76,7 @@ Route.group(() => {
 }).prefix('/booking').middleware('auth');
 
 Route.group(() => {
+  Route.get('/show', 'BookmarkController.getUserBookmarks');
   Route.post('/:shopId/create', 'BookmarkController.create');
   Route.delete('/:shopId', 'BookmarkController.delete');
 }).prefix('/bookmark').middleware('auth');

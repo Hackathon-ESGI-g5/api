@@ -31,6 +31,9 @@ class AuthController {
 
   async forgotPassword ({ request, response }) {
     await Persona.forgotPassword(request.input('uid'));
+    return response.status('200').json({
+      message: "Mail sended to reset password"
+    });
   }
 
   async updatePasswordByToken ({ request }) {

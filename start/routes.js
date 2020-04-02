@@ -82,10 +82,10 @@ Route.group(() => {
 
 Route.group(() => {
   Route.post('/:shopId/create', 'PostController.create');
-  Route.put('/:postId/update', 'PostController.update');
+  Route.put('/:postId/edit', 'PostController.update');
   Route.delete('/:postId/delete', 'PostController.delete');
   Route.get('/all', 'PostController.getAll');
-  Route.get('/shop/:shopId.show', 'PostController.getByShop');
+  Route.get('/shop/:shopId/show', 'PostController.getByShop');
   Route.get('/:postId/show', 'PostController.getById');
 }).prefix('/post').middleware('auth');
 

@@ -18,9 +18,9 @@ class PostController {
         }
     }
 
-    async getByShop({ request, auth, response }){
+    async getByShop({ request, params, auth, response }){
         const shopId = params.shopId;
-        const post = await Post.query().where("store_id",shopId).first();
+        const post = await Post.query().where("shop_id",shopId).first();
         if(post != null){
             return response.status(200).json({
                 status: "Success",
@@ -50,6 +50,7 @@ class PostController {
         post.title = title;
         post.body = body;
         post.status = status;
+        post.shop_id = shopId;
         try{
             await post.save();
             return response.status(201).json({
@@ -65,7 +66,7 @@ class PostController {
         }
     }
 
-    async update({ request, auth, response }){
+    async update({ request, params, auth, response }){
         const postId = params.postId;
         const { title, body, status } = request.post();
         const post = await Post.find(postId);
@@ -95,7 +96,7 @@ class PostController {
         }
     }
 
-    async delete({ request, auth, response }){
+    async delete({ request, params, auth, response }){
         const postId = params.postId;
         const post = await Post.find(postId);
         if(post != null){

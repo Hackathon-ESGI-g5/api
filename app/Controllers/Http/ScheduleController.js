@@ -7,7 +7,19 @@ const moment = use('moment')
 
 class ScheduleController {
     async getByid({ request, auth, response }) {
-
+        const scheculeId = params.scheculeId;
+        const schedule = await Schedule.find(scheculeId);
+        if(schedule != null){
+            return response.status(200).json({
+                status: "Success",
+                schedule
+            });
+        } else {
+            return response.status(404).json({
+                status: "Error",
+                message: "Schedule doesn't exists"
+            });
+        }
     }
 
     async getByShop({ request, auth, params, response }){
@@ -29,7 +41,20 @@ class ScheduleController {
     }
 
     async getByStatus({ request, auth, response }){
-
+        const status = params.status;
+        const schedules = await Schedule.query().where("isopen", status).fetch;
+        if(schedules.rows.length > 0){
+            return response.status(200).json({
+                status: "Success",
+                rows: schedules.rows.length,
+                schedules
+            });
+        } else {
+            return response.status(404).json({
+                status: "Error",
+                message: "No Schedule found"
+            });
+        }
     }
 
     async getAll({ request, auth, response }){

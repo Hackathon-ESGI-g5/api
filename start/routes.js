@@ -21,6 +21,13 @@ Route.post('register', 'AuthController.register');
 Route.post('register_shop', 'ShopController.create');
 Route.post('login', 'AuthController.login');
 Route.post('forgot-password', 'AuthController.forgotPassword');
+//Facebook Auth
+Route.get('login/facebook', 'LoginController.geturl')
+Route.get('facebook/callback', 'LoginController.callback')
+//Google Auth
+Route.get('login/google', 'LoginController.google_geturl')
+Route.get('google/callback', 'LoginController.google_callback')
+
 
 Route.get('/', () => {
   return { greeting: 'Hello world in JSON' }

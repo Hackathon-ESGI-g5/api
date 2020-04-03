@@ -54,6 +54,7 @@ Route.group(() => {
 Route.group(() => {
   Route.get('/all', 'ShopController.getAll');
   Route.post('/search', 'ShopController.search');
+  Route.get('/:shopId/show', 'ShopController.getById');
 }).prefix('/shop')
 
 Route.group(() => {
@@ -61,7 +62,6 @@ Route.group(() => {
   Route.post('/send_validation_shop', 'ShopController.sendValidationShop');
   Route.post('/send_validation_owner', 'ShopController.sendValidationOwner');
   Route.get('/show', 'ShopController.getByUser');
-  Route.get('/:shopId/show', 'ShopController.getById');
   Route.put('/:shopId/edit', 'ShopController.update');
   Route.delete('/:shopId/delete', 'ShopController.delete');
 }).prefix('/shop').middleware('auth');

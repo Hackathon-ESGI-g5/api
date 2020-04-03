@@ -237,9 +237,19 @@ class ShopController {
         message: "We need type of file, available values: profil_pic, path_to_validation_shop, path_to_validation_owner."
       })
     } else if(shop) {
-      const profilePic = request.file('file', {
-        size: '2mb'
-      })
+      var params = {};
+      if(type == "profil_pic"){
+        params = {
+          types: ['image'],
+          size: '2mb'
+        }
+      } else {
+        params = {
+          size: '2mb'
+        }
+      }
+
+      const profilePic = request.file('file', params)
 
       const current_time = moment().format('X');
     
@@ -265,7 +275,7 @@ class ShopController {
         await shop.save();
         return response.status(200).json({
           status: "Success",
-          message: "Profil picture successfully uploaded.",
+          message: "File successfully uploaded.",
           profilePic
         })
       }

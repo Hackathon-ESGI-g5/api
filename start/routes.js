@@ -42,6 +42,7 @@ Route.get('/', () => {
 })
 
 Route.group(() => {
+  Route.post('/upload', 'UserController.upload_file');
   Route.get('/all', 'UserController.getAll');
   Route.get('/current-user', 'UserController.getCurrentUser');
   Route.get('/:userId/show', 'UserController.getById');

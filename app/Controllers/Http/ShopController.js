@@ -227,24 +227,26 @@ class ShopController {
     });
   }
 
-  async sendPic({request, auth, response}){
+  async upload_file({request, auth, response}){
     const user = auth.user;
     const shop = await Shop.query().where('user_id',user.id).first();
-    if(shop) {
-      const profilePic = request.file('profile_pic', {
-        types: ['image'],
+    const { type } = request.all();
+    if(type != "profil_pic" && type != "path_to_validation_shop" && type != "path_to_validation_owner" ){
+      return response.status(400).json({
+        status: "Error",
+        message: "We need type of file, available values: profil_pic, path_to_validation_shop, path_to_validation_owner."
+      })
+    } else if(shop) {
+      const profilePic = request.file('file', {
         size: '2mb'
       })
 
       const current_time = moment().format('X');
     
-      await profilePic.move(Helpers.tmpPath('uploads'), {
+      await profilePic.move(Helpers.publicPath("uploads"), {
         name: `Shop-${shop.id}-${current_time}.${profilePic.extname}`,
         overwrite: true
       })
-      
-      const res = await Drive.disk("local").put('/plop/'+profilePic.name, profilePic);
-      console.log(res);
       
       if (!profilePic.moved()) {
         return response.status(400).json({
@@ -253,7 +255,13 @@ class ShopController {
           stack_trace:profilePic.error()
         })
       } else {
-        shop.profile_picture_url = "";
+        if(type == "profil_pic"){
+          shop.profile_picture_url = profilePic.fileName;
+        } else if(type == "path_to_validation_shop") {
+          shop.path_to_validation_shop = profilePic.fileName;
+        } else if(type == "path_to_validation_owner") {
+          shop.path_to_validation_owner = profilePic.fileName;
+        }
         await shop.save();
         return response.status(200).json({
           status: "Success",

@@ -1,7 +1,8 @@
 'use strict'
 
 const Shop = use('App/Models/Shop');
-const Database = use('Database');
+const Helpers = use('Helpers');
+const Drive = use('Drive');
 const Persona = use('Persona');
 const moment = use('moment');
 const Slot = use('App/Models/Slot');
@@ -224,6 +225,66 @@ class ShopController {
     return response.status(200).json({
       status: `Shop ${params.shopId} deleted`,
     });
+  }
+
+  async upload_file({request, auth, response}){
+    const user = auth.user;
+    const shop = await Shop.query().where('user_id',user.id).first();
+    const { type } = request.all();
+    if(type != "profil_pic" && type != "path_to_validation_shop" && type != "path_to_validation_owner" ){
+      return response.status(400).json({
+        status: "Error",
+        message: "We need type of file, available values: profil_pic, path_to_validation_shop, path_to_validation_owner."
+      })
+    } else if(shop) {
+      var params = {};
+      if(type == "profil_pic"){
+        params = {
+          types: ['image'],
+          size: '2mb'
+        }
+      } else {
+        params = {
+          size: '2mb'
+        }
+      }
+
+      const profilePic = request.file('file', params)
+
+      const current_time = moment().format('X');
+    
+      await profilePic.move(Helpers.publicPath("uploads"), {
+        name: `Shop-${shop.id}-${current_time}.${profilePic.extname}`,
+        overwrite: true
+      })
+      
+      if (!profilePic.moved()) {
+        return response.status(400).json({
+          status: "Error",
+          message: "Error on upload.",
+          stack_trace:profilePic.error()
+        })
+      } else {
+        if(type == "profil_pic"){
+          shop.profile_picture_url = profilePic.fileName;
+        } else if(type == "path_to_validation_shop") {
+          shop.path_to_validation_shop = profilePic.fileName;
+        } else if(type == "path_to_validation_owner") {
+          shop.path_to_validation_owner = profilePic.fileName;
+        }
+        await shop.save();
+        return response.status(200).json({
+          status: "Success",
+          message: "File successfully uploaded.",
+          profilePic
+        })
+      }
+    } else {
+      return response.status(400).json({
+        status: "Error",
+        message: "Shop not found."
+      })
+    }
   }
 }
 

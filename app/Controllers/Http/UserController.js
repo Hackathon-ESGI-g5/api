@@ -1,6 +1,9 @@
 'use strict'
 const User = use('App/Models/User');
 const Persona = use('Persona');
+const moment = use('moment');
+const Helpers = use('Helpers');
+
 class UserController {
     async getById({ params, auth, response }) {
         const userId = params.userId;
@@ -76,6 +79,47 @@ class UserController {
                 message: "User not found",
                 stack_trace: e
             });
+        }
+    }
+
+    async upload_file({request, auth, response}){
+        const user = auth.user;
+        const { type } = request.all();
+        if(type != "profil_pic" ){
+            return response.status(400).json({
+                status: "Error",
+                message: "We need type of file, available values: profil_pic."
+            })
+        } else {
+            const profilePic = request.file('file', {
+                types: ['image'],
+                size: '2mb'
+            })
+
+            const current_time = moment().format('X');
+            
+            await profilePic.move(Helpers.publicPath("uploads"), {
+                name: `User-${user.id}-${current_time}.${profilePic.extname}`,
+                overwrite: true
+            })
+            
+            if (!profilePic.moved()) {
+                return response.status(400).json({
+                status: "Error",
+                message: "Error on upload.",
+                stack_trace:profilePic.error()
+                })
+            } else {
+                if(type == "profil_pic"){
+                    user.profil_picture_url = profilePic.fileName;
+                }
+                await user.save();
+                return response.status(200).json({
+                    status: "Success",
+                    message: "File successfully uploaded.",
+                    profilePic
+                })
+            }
         }
     }
 }

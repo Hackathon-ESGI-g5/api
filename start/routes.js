@@ -16,6 +16,10 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
+const Helpers = use('Helpers')
+const fs = use('fs')
+const readFile = Helpers.promisify(fs.readFile)
+
 Route.post('update-password-by-token', 'AuthController.updatePasswordByToken');
 Route.post('register', 'AuthController.register');
 Route.post('register_shop', 'ShopController.create');
@@ -28,12 +32,17 @@ Route.get('authenticated/facebook', 'LoginController.callback')
 Route.get('login/google', 'LoginController.google_geturl')
 Route.get('authenticated/google', 'LoginController.google_callback')
 
+Route.get('/file/:file', async ({ params }) => {
+  const file = params.file;
+  return await readFile(Helpers.publicPath("uploads/")+file)
+})
 
 Route.get('/', () => {
   return { greeting: 'Hello world in JSON' }
 })
 
 Route.group(() => {
+  Route.post('/upload', 'UserController.upload_file');
   Route.get('/all', 'UserController.getAll');
   Route.get('/current-user', 'UserController.getCurrentUser');
   Route.get('/:userId/show', 'UserController.getById');
@@ -47,6 +56,9 @@ Route.group(() => {
 }).prefix('/shop')
 
 Route.group(() => {
+  Route.post('/upload', 'ShopController.upload_file');
+  Route.post('/send_validation_shop', 'ShopController.sendValidationShop');
+  Route.post('/send_validation_owner', 'ShopController.sendValidationOwner');
   Route.get('/show', 'ShopController.getByUser');
   Route.get('/:shopId/show', 'ShopController.getById');
   Route.put('/:shopId/edit', 'ShopController.update');

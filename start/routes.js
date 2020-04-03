@@ -21,6 +21,13 @@ Route.post('register', 'AuthController.register');
 Route.post('register_shop', 'ShopController.create');
 Route.post('login', 'AuthController.login');
 Route.post('forgot-password', 'AuthController.forgotPassword');
+//Facebook Auth
+Route.get('login/facebook', 'LoginController.geturl')
+Route.get('authenticated/facebook', 'LoginController.callback')
+//Google Auth
+Route.get('login/google', 'LoginController.google_geturl')
+Route.get('authenticated/google', 'LoginController.google_callback')
+
 
 Route.get('/', () => {
   return { greeting: 'Hello world in JSON' }
@@ -40,6 +47,7 @@ Route.group(() => {
 }).prefix('/shop')
 
 Route.group(() => {
+  Route.get('/show', 'ShopController.getByUser');
   Route.get('/:shopId/show', 'ShopController.getById');
   Route.put('/:shopId/edit', 'ShopController.update');
   Route.delete('/:shopId/delete', 'ShopController.delete');

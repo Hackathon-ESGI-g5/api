@@ -8,6 +8,63 @@ const Slot = use('App/Models/Slot');
 
 class ShopController {
 
+  async getByUser({ request, auth, response, params }) {
+    moment.locale('fr');
+    const user = auth.user;
+
+    let shop = await Shop.query().where("user_id", user.id).with('schedules', (builder) => {
+      builder.orderBy('id', 'asc')
+    }).fetch();
+    shop = shop.toJSON()[0];
+    if(shop != null){
+      const today = moment().format('YYYY-MM-DD');
+
+      let slots = await Slot.query()
+        .where('shop_id', shop.id)
+        .where('begin_at', '>=', today)
+        .orderBy('begin_at', 'asc')
+        .with('bookings', (builder) => {
+          builder.where('user_id', user.id)
+        }).fetch();
+
+      slots = slots.toJSON();
+      slots = slots.map(slot => ( {
+        ...slot,
+        formattedDay: moment(slot.begin_at).format('YYYY-MM-DD'),
+        formattedHour: moment(slot.begin_at).format('HH:mm')
+      }));
+
+      const groupedSlots = {};
+      slots.forEach(slot => {
+        if (!(slot.formattedDay in groupedSlots)) {
+          groupedSlots[slot.formattedDay] = [];
+        }
+        groupedSlots[slot.formattedDay].push(slot);
+      });
+
+      const days = {};
+      const daysDate = Object.keys(groupedSlots);
+      daysDate.forEach(date => {
+        days[date] = moment(date).format('dddd Do MMMM YYYY')
+      });
+
+      return response.status(200).json({
+        status: "Success",
+        shop,
+        slots_number: slots.length,
+        slots: groupedSlots,
+        days
+      });
+    } else {
+      return response.status(404).json({
+        status: "Error",
+        message: "No shops for current user"
+      });
+    }
+
+    
+  }
+
   async getById({ request, auth, response, params }) {
     moment.locale('fr');
     const id = params.shopId;
@@ -95,7 +152,7 @@ class ShopController {
     console.log(request.post());
     const {email, password, password_confirmation, firstname, lastname} = request.post();
     try {
-      const user = await Persona.register({email, password, password_confirmation, firstname, lastname, role_id:2 });
+      const user = await Persona.register({email, password, password_confirmation, firstname, lastname, role_id:2, login_source: "basic" });
       if(user.id != null){
         const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner } = request.post();
         const shop = new Shop();

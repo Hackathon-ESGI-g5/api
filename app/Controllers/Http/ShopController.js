@@ -1,7 +1,8 @@
 'use strict'
 
 const Shop = use('App/Models/Shop');
-const Database = use('Database');
+const Helpers = use('Helpers');
+const Drive = use('Drive');
 const Persona = use('Persona');
 const moment = use('moment');
 const Slot = use('App/Models/Slot');
@@ -224,6 +225,48 @@ class ShopController {
     return response.status(200).json({
       status: `Shop ${params.shopId} deleted`,
     });
+  }
+
+  async sendPic({request, auth, response}){
+    const user = auth.user;
+    const shop = await Shop.query().where('user_id',user.id).first();
+    if(shop) {
+      const profilePic = request.file('profile_pic', {
+        types: ['image'],
+        size: '2mb'
+      })
+
+      const current_time = moment().format('X');
+    
+      await profilePic.move(Helpers.tmpPath('uploads'), {
+        name: `Shop-${shop.id}-${current_time}.${profilePic.extname}`,
+        overwrite: true
+      })
+      
+      const res = await Drive.disk("local").put('/plop/'+profilePic.name, profilePic);
+      console.log(res);
+      
+      if (!profilePic.moved()) {
+        return response.status(400).json({
+          status: "Error",
+          message: "Error on upload.",
+          stack_trace:profilePic.error()
+        })
+      } else {
+        shop.profile_picture_url = "";
+        await shop.save();
+        return response.status(200).json({
+          status: "Success",
+          message: "Profil picture successfully uploaded.",
+          profilePic
+        })
+      }
+    } else {
+      return response.status(400).json({
+        status: "Error",
+        message: "Shop not found."
+      })
+    }
   }
 }
 

@@ -47,6 +47,9 @@ Route.group(() => {
 }).prefix('/shop')
 
 Route.group(() => {
+  Route.post('/send_pic', 'ShopController.sendPic');
+  Route.post('/send_validation_shop', 'ShopController.sendValidationShop');
+  Route.post('/send_validation_owner', 'ShopController.sendValidationOwner');
   Route.get('/show', 'ShopController.getByUser');
   Route.get('/:shopId/show', 'ShopController.getById');
   Route.put('/:shopId/edit', 'ShopController.update');

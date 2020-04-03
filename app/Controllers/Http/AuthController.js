@@ -47,7 +47,7 @@ class AuthController {
     });
   }
 
-  async updatePasswordByToken ({ request, params }) {
+  async updatePasswordByToken ({ request, response }) {
     const payload = request.only(['password', 'password_confirmation','token']);
     await Persona.updatePasswordByToken(payload.token, {password: payload.password,password_confirmation: payload.password_confirmation});
     return response.status('200').json({

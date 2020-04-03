@@ -92,6 +92,7 @@ class UserController {
             })
         } else {
             const profilePic = request.file('file', {
+                types: ['image'],
                 size: '2mb'
             })
 

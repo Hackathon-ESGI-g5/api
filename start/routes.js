@@ -25,6 +25,7 @@ Route.post('register', 'AuthController.register');
 Route.post('register_shop', 'ShopController.create');
 Route.post('login', 'AuthController.login');
 Route.post('forgot-password', 'AuthController.forgotPassword');
+Route.post('validate_mail', 'AuthController.verifyEmail');
 //Facebook Auth
 Route.get('login/facebook', 'LoginController.geturl')
 Route.get('authenticated/facebook', 'LoginController.callback')

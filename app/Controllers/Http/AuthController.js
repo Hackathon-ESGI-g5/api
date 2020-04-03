@@ -55,6 +55,23 @@ class AuthController {
     });
   }
 
+  async verifyEmail ({ request, session, response }) {
+      const payload = request.only(['token']);
+      try {
+        const user = await Persona.verifyEmail(payload.token)
+        return response.status('200').json({
+          status: "Success",
+          message: "Mail validate!"
+        });
+      } catch(e) {
+        return response.status('400').json({
+          status: "Error",
+          message: "Error on mail validation, perhaps token expired.",
+          stack_trace: e.message
+        });
+      }
+  }
+
 }
 //test
 

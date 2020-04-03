@@ -1,4 +1,4 @@
-<h2> Hello {{ user.firstname }} {{ user.lastname }} ! </h2>
+<h2> Hello {{ firstname }} {{ lastname }} ! </h2>
 <p>
-  Bienvenu sur SAFESHOP, commencez dès maintenant par vous connecter depuis la <a href="{{ homepage }}">page d'accueil de SAFESHOP</a>
+  Bienvenu sur SAFESHOP, commencez dès maintenant par valider votre compte : <a href="{{ api_url }}/validate_email/{{ token }}" target="_blank">Valider mon email</a>
 </p>

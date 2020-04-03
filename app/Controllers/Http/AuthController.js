@@ -8,6 +8,7 @@ class AuthController {
     const payload = request.only(['email', 'password', 'password_confirmation', 'firstname', 'lastname', 'profil_picture_url']);
     try {
       payload.role_id = 3;
+      payload.login_source = "basic";
       const user = await Persona.register(payload);
       return response.status(200).json({
         status: "Success",

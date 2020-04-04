@@ -1,6 +1,7 @@
 'use strict'
 
 const Booking = use('App/Models/Booking');
+const User = use('App/Models/User');
 const Slot = use('App/Models/Slot');
 const moment = use('moment');
 const Database = use('Database');
@@ -71,11 +72,22 @@ class BookingController {
 
   async getByUser({request,params,auth,response}){
     const user = auth.user;
-    const bookings = await Booking.query().where('user_id',user.id).fetch();
-    if (bookings.rows.length > 0) {
+    const results = await Database.raw(
+      'SELECT sl.begin_at, s.id, s.label, s.address, s.city FROM users u JOIN bookings b ON b.user_id = u.id JOIN slots sl ON b.slot_id = sl.id JOIN shops s ON sl.shop_id = s.id WHERE u.id = ?'
+    , [user.id]);
+    const {rows} = results;
+    const bookings = rows.map(row => {
+      return {
+        formattedHour: moment(row.begin_at).format('HH:MM'),
+        formattedDay: moment(row.begin_at).format('DD-MM-YYYY'),
+        label: row.label,
+        address: row.address,
+        city: row.city
+      }
+    });
+    if (rows.length > 0) {
       return response.status(200).json({
         status: "Success",
-        rows: bookings.rows.length,
         bookings
       });
     } else {

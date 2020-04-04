@@ -80,6 +80,7 @@ class BookingController {
       return {
         formattedHour: moment(row.begin_at).format('HH:MM'),
         formattedDay: moment(row.begin_at).format('DD-MM-YYYY'),
+        shopId: row.id,
         label: row.label,
         address: row.address,
         city: row.city

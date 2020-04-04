@@ -12,6 +12,13 @@ class BookingController {
 
     const slotId = params.slotId;
     const slot = await Slot.find(slotId);
+
+    if (slot.number_max === 0){
+      return response.status(403).json({
+        error: 'Ce créneau est déjà complet'
+      })
+    }
+
     if(slot != null){
         const shopId = slot.shop_id;
         const user = auth.user;

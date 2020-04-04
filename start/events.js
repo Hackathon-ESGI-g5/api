@@ -59,3 +59,19 @@ Event.on('user::created', async (data) => {
             .subject('Bienvenue sur SAFESHOP !')
     })
 })
+
+Event.on('email::changed', async (data) => {
+    console.log("Event user changed his email");
+    console.log(data);
+    await Mail.send('emails.user_email_changed', {
+        firstname: data.user.firstname,
+        lastname: data.user.lastname,
+        api_url: Env.get('FRONT_URL'),
+        token: data.token
+    }, (message) => {
+        message
+            .to(data.user.email)
+            .from(`SAFESHOP<${Env.get('MAIL_SENDER')}>`)
+            .subject('Changement d\'adresse mail | SAFESHOP.fr')
+    })
+})  

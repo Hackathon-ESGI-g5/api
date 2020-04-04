@@ -38,7 +38,7 @@ class UserController {
     }
 
     async update({ request, auth, params, response }){
-        const payload = request.only(['firstname', 'lastname', 'profil_picture_url']);
+        const payload = request.only(['firstname', 'lastname', 'profil_picture_url', 'email']);
         const user = auth.user;
         try{
             await Persona.updateProfile(user, payload);

@@ -25,11 +25,16 @@ class ScheduleController {
     async getByShop({ request, auth, params, response }){
         const shopId = params.shopId;
         try{
-            const schedules = await Schedule.query().where("shop_id",shopId).fetch();
+            const schedules = await Schedule.query().where("shop_id",shopId).orderBy('day', 'asc').fetch();
+            const json = schedules.toJSON();
+            const interval = json[0].interval;
+            const number_max = json[0].number_max;
             return response.status(200).json({
-                status: "Success",
-                rows: schedules.rows.length,
-                schedules
+              status: "Success",
+              rows: schedules.rows.length,
+              interval,
+              number_max,
+              schedules,
             });
         } catch(e) {
             return response.status(400).json({
@@ -77,7 +82,7 @@ class ScheduleController {
     async create({ request, response, params }){
       const shopId = params.shopId;
       const { open_hour, close_hour, interval, day, isopen, number_max } = request.post();
-      
+
       // check if schedule exists for the day and the shop before create a new
 
       const schedule = new Schedule;
@@ -179,7 +184,7 @@ class ScheduleController {
                 }
                 currentdate.add(1,"day");//increment currentdate to pass to next day on the loop
             }
-            console.log("==== Update on interval complete"); 
+            console.log("==== Update on interval complete");
         }
 
         //update for openning dates
@@ -269,7 +274,7 @@ class ScheduleController {
                 shop_id: schedule.shop_id
             }
         });*/
-        
+
     }
 
     async delete({ params, auth, response }){

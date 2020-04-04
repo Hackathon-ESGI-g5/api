@@ -145,7 +145,7 @@ class SlotController {
             .fetch();
           if(slots.rows.length == 0){
             const slot = new Slot();
-            slot.shop_id = payload.shop_id;
+            slot.shop_id = shopId;
             slot.begin_at = b;
             //add value and increment for while loop
             slot.end_at = e;

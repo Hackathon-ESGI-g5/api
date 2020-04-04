@@ -33,7 +33,9 @@
     "mysql": "^2.18.1",
     "pg": "^8.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@adonisjs/cli": "^4.0.12"
+  },
   "autoload": {
     "App": "./app"
   }

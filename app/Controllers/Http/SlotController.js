@@ -86,12 +86,13 @@ class SlotController {
         }
     }
 
-  async generate({ request, auth, response }){
+  async generate({ request, params, auth, response }){
+    const shopId = params.shopId;
     const payload = request.only(['shop_id', 'start_datetime', 'end_datetime']);
     //generate slots for a shop
 
     //get all schedules for a shop
-    const schedules = await Schedule.query().where('shop_id', payload.shop_id).fetch();
+    const schedules = await Schedule.query().where('shop_id', shopId).fetch();
     console.log(schedules);
     const days = {
       1: "Monday",

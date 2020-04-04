@@ -25,6 +25,7 @@ Route.post('register', 'AuthController.register');
 Route.post('register_shop', 'ShopController.create');
 Route.post('login', 'AuthController.login');
 Route.post('forgot-password', 'AuthController.forgotPassword');
+Route.post('validate_mail', 'AuthController.verifyEmail');
 //Facebook Auth
 Route.get('login/facebook', 'LoginController.geturl')
 Route.get('authenticated/facebook', 'LoginController.callback')
@@ -53,6 +54,7 @@ Route.group(() => {
 Route.group(() => {
   Route.get('/all', 'ShopController.getAll');
   Route.post('/search', 'ShopController.search');
+  Route.get('/:shopId/show', 'ShopController.getById');
 }).prefix('/shop')
 
 Route.group(() => {
@@ -60,7 +62,6 @@ Route.group(() => {
   Route.post('/send_validation_shop', 'ShopController.sendValidationShop');
   Route.post('/send_validation_owner', 'ShopController.sendValidationOwner');
   Route.get('/show', 'ShopController.getByUser');
-  Route.get('/:shopId/show', 'ShopController.getById');
   Route.put('/:shopId/edit', 'ShopController.update');
   Route.delete('/:shopId/delete', 'ShopController.delete');
 }).prefix('/shop').middleware('auth');

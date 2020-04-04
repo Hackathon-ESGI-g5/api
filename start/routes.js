@@ -38,9 +38,6 @@ Route.get('/file/:file', async ({ params }) => {
   return await readFile(Helpers.publicPath("uploads/")+file)
 })
 
-Route.get('/', () => {
-  return { greeting: 'Hello world in JSON' }
-})
 
 Route.group(() => {
   Route.post('/upload', 'UserController.upload_file');

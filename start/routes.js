@@ -91,6 +91,7 @@ Route.group(() => {
   Route.delete('/:slotId/delete','BookingController.delete')
   Route.get('/user/show','BookingController.getByUser')
   Route.get('/shop/:shopId/show','BookingController.getByShop')
+  Route.get('/user/shop/:shopId/show','BookingController.getByShopAndUser')
 }).prefix('/booking').middleware('auth');
 
 Route.group(() => {

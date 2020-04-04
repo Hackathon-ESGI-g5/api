@@ -105,6 +105,44 @@ class BookingController {
     }
   }
 
+  /**
+   * retrieve bookings by slots date (starting from today) for a given store id
+   * @param request
+   * @param params
+   * @param auth
+   * @param response
+   * @returns {Promise<*>}
+   */
+  async getByShopAndUser({request, params,auth,response}) {
+    moment.locale('fr');
+    const shopId = params.shopId;
+
+    const today = moment().format('YYYY-MM-DD');
+    let slots = await Slot.query()
+      .where('shop_id', shopId)
+      .where('begin_at', '>=', today)
+      .with('bookings', (builder) => {
+        builder.where('user_id', auth.user.id)
+      })
+      .orderBy('begin_at', 'asc')
+      .fetch();
+
+    slots = slots.toJSON();
+    slots = slots.map(slot => ( {
+      bookings: slot.bookings,
+      formattedDay: moment(slot.begin_at).format('YYYY-MM-DD'),
+    }));
+
+    const groupedSlots = {};
+    slots.forEach(slot => {
+      if (!(slot.formattedDay in groupedSlots)) {
+        groupedSlots[slot.formattedDay] = [];
+      }
+      groupedSlots[slot.formattedDay].push(slot);
+    });
+    return response.status(200).json(groupedSlots);
+  }
+
 }
 
 module.exports = BookingController

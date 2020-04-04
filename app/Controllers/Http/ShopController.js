@@ -63,10 +63,10 @@ class ShopController {
       });
     }
 
-    
+
   }
 
-  async getById({ request, auth, response, params }) {
+  async getById({ request, response, params }) {
     moment.locale('fr');
     const id = params.shopId;
 
@@ -81,9 +81,6 @@ class ShopController {
       .where('shop_id', id)
       .where('begin_at', '>=', today)
       .orderBy('begin_at', 'asc')
-      .with('bookings', (builder) => {
-        builder.where('user_id', auth.user.id)
-      })
       .fetch()
     ;
 
@@ -252,12 +249,12 @@ class ShopController {
       const profilePic = request.file('file', params)
 
       const current_time = moment().format('X');
-    
+
       await profilePic.move(Helpers.publicPath("uploads"), {
         name: `Shop-${shop.id}-${current_time}.${profilePic.extname}`,
         overwrite: true
       })
-      
+
       if (!profilePic.moved()) {
         return response.status(400).json({
           status: "Error",

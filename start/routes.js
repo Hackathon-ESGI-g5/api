@@ -32,6 +32,8 @@ Route.get('authenticated/facebook', 'LoginController.callback')
 //Google Auth
 Route.get('login/google', 'LoginController.google_geturl')
 Route.get('authenticated/google', 'LoginController.google_callback')
+//INSEE
+Route.get('insee/siret/:siret', 'InseeController.getBySiret')
 
 Route.get('/file/:file', async ({ params }) => {
   const file = params.file;

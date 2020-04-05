@@ -29,7 +29,7 @@ class LoginController {
             }
 
             const user = await User.findOrCreate(whereClause, userDetails)
-            const { token } = await auth.login(user)
+            const { token } = await auth.generate(user)
             return response.redirect(`${Env.get('FRONT_URL')}/token/${token}`, false, 301)
         } catch (error) {
             return response.status(400).json({ 

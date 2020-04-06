@@ -87,12 +87,13 @@ class SlotController {
     }
 
   async generate({ request, params, auth, response }){
+    moment.locale('fr');
     const shopId = params.shopId;
     const payload = request.only(['shop_id', 'start_datetime', 'end_datetime']);
     //generate slots for a shop
 
     //get all schedules for a shop
-    const schedules = await Schedule.query().where('shop_id', shopId).fetch();
+    const schedules = await Schedule.query().where('shop_id', shopId).andWhere('isopen',true).fetch();
     console.log(schedules);
     const days = {
       1: "Monday",
@@ -104,11 +105,11 @@ class SlotController {
       7: "Sunday"
     }
 
-    //foreach schedule create a slot
+    //foreach schedule create slots
     for(let i in schedules.rows) {
       const schedule = schedules.rows[i];
       // console.log(schedule);
-      var day = moment().startOf('week').day(days[schedule.day]);
+      var day = moment().locale('fr').startOf('isoWeek').day(schedule.day);
       console.log(day);
       const currentyear = day.year()
       const week = day.week()
@@ -125,6 +126,8 @@ class SlotController {
       // define first start_datetime and end_datetime
       end_time.add({hours:close_hour,minutes:close_minute});
       day.add({hours:open_hour,minutes:open_minutes});
+      console.log("Starts day : ",day)
+      console.log("End day : ",end_time)
 
       //iter on each day
       while(currentyear == day.year() && (week == day.week() || next_week == day.week())){
@@ -156,14 +159,14 @@ class SlotController {
             // console.log(temp_day);
           }
         }
-        day.add(7,'d');
-        end_time.add(7,'d');
+        day.add(7,'day');
+        end_time.add(7,'day');
       }
       // console.log(currentyear);
     }
 
     return response.status(200).json({
-      schedules
+      msg:"success"
     });
   }
 

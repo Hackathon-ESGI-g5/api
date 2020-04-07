@@ -78,7 +78,7 @@ class BookingController {
     const {rows} = results;
     const bookings = rows.map(row => {
       return {
-        formattedHour: moment(row.begin_at).format('HH:MM'),
+        formattedHour: moment(row.begin_at).format('HH:mm'),
         formattedDay: moment(row.begin_at).format('DD-MM-YYYY'),
         shopId: row.id,
         label: row.label,
@@ -86,6 +86,7 @@ class BookingController {
         city: row.city
       }
     });
+    console.log(bookings);
     if (rows.length > 0) {
       return response.status(200).json({
         status: "Success",

@@ -115,7 +115,7 @@ class ShopController {
   }
 
   async getAll({ request, auth, response }){
-    const { query, lat, lng } = request.get();
+    const { lat, lng } = request.get();
     let sql = '';
     let params = {};
     if (lat && lng) {

@@ -24,7 +24,9 @@ class SlotController {
 
     async getByShop({ params, auth, response }){
       moment.locale('fr');
-      const shopId = params.shopId
+      const user = auth.user;
+      const shop = await user.shop().fetch();
+      const shopId = shop.id;
         try{
             let slots = await Slot.query()
               .where('shop_id', shopId)

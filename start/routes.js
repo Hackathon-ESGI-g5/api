@@ -65,12 +65,12 @@ Route.group(() => {
   Route.delete('/:shopId/delete', 'ShopController.delete');
 }).prefix('/shop').middleware('auth');
 
-Route.group(() => {
-  Route.get('/shop/:shopId/show', 'SlotController.getByShop');
-}).prefix('/slot')
+// Route.group(() => {
+// }).prefix('/slot')
 
 Route.group(() => {
   //Route.post('/create', 'SlotController.create');
+  Route.get('/shop/show', 'SlotController.getByShop');
   Route.post('/:shopId/generate', 'SlotController.generate');
   Route.get('/all', 'SlotController.getAll');
   Route.get('/:slotId/show', 'SlotController.getById');

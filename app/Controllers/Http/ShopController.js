@@ -2,10 +2,10 @@
 
 const Shop = use('App/Models/Shop');
 const Helpers = use('Helpers');
-const Drive = use('Drive');
 const Persona = use('Persona');
 const moment = use('moment');
 const Slot = use('App/Models/Slot');
+const Database = use('Database');
 
 class ShopController {
 
@@ -115,14 +115,33 @@ class ShopController {
   }
 
   async getAll({ request, auth, response }){
-    const shops = await Shop.query().with('schedules', (builder) => {
-      builder.orderBy('id', 'asc')
-    }).fetch();
+    const { query, lat, lng } = request.get();
+    let sql = '';
+    let params = {};
+    if (lat && lng) {
+      sql = `select s.id
+             from shops s
+             where ROUND(6371 * 2 * ASIN ( SQRT ( POWER(SIN((:lat: - s.lat) * PI()/ 180 / 2), 2) + COS(s.lat * PI()/ 180) * COS(:lat: * PI()/ 180) * POWER(SIN((:lng: - s.lng) * PI()/ 180 / 2), 2) ) )::numeric , 2) <= 2`;
+      params = { lat: parseFloat(lat), lng: parseFloat(lng) };
+    } else {
+      sql = 'select s.id from shops s';
+    }
+    const results = await Database.raw(sql, params);
+    const { rows } = results;
+    const ids = rows.map(row => row.id);
+
+    const shops = await Shop.query()
+      .with('schedules', (builder) => {
+        builder.orderBy('id', 'asc')
+      })
+      .where('id', 'in', ids)
+      .fetch();
+
     return response.status(200).json({
-        status: "Success",
-        rows: shops.rows.length,
-        shops
-    });
+      status: "Success",
+      shops
+    })
+
   }
 
   async search({ request, auth, response }){

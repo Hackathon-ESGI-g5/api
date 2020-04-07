@@ -30,6 +30,7 @@ class SlotController {
         try{
             let slots = await Slot.query()
               .where('shop_id', shopId)
+              .orderBy('begin_at', 'asc')
               .with('users')
               .fetch();
 

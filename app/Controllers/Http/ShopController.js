@@ -171,10 +171,10 @@ class ShopController {
     try {
       const user = await Persona.register({email, password, password_confirmation, firstname, lastname, role_id:2, login_source: "basic" });
       if(user.id != null){
-        const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner } = request.post();
+        const { label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner, lat, lng } = request.post();
         const shop = new Shop();
         shop.user_id = user.id;
-        this.saveShop(shop, label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,0);
+        this.saveShop(shop, label, address, zip_code, city, phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner, lat, lng,0);
         try{
           await shop.save();
           return response.status(201).json({
@@ -199,7 +199,7 @@ class ShopController {
     }
   }
 
-  async saveShop(shop, label, address, zip_code, city,phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner,is_validate) {
+  async saveShop(shop, label, address, zip_code, city,phone_number, email, profile_picture_url, siret, siren, activity, path_to_validation_shop, path_to_validation_owner, lat, lng, is_validate) {
     shop.label = label;
     shop.address = address;
     shop.zip_code = zip_code;
@@ -213,6 +213,8 @@ class ShopController {
     shop.path_to_validation_shop = path_to_validation_shop;
     shop.path_to_validation_owner = path_to_validation_owner;
     shop.is_validate = is_validate;
+    shop.lat = lat,
+    shop.lng = lng
   };
 
   async update({ request, response, params }){
